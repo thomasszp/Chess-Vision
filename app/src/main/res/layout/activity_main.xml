@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal">
+    <androidx.appcompat.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:gravity="center_vertical|start">
+        <androidx.appcompat.widget.ActionMenuView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/baseline_menu_white_48"/>
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/prevMoves"
+            android:layout_width="150dp"
+            android:layout_height="40dp"/>
+        <androidx.appcompat.widget.ActionMenuView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="130dp"
+            android:background="@drawable/baseline_refresh_white_36"/>
+        <androidx.appcompat.widget.ActionMenuView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:background="@drawable/baseline_more_vert_white_36"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Turn"
+                    android:layout_gravity="center"/>
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"/>
+            </LinearLayout>
+            <!--Chess Board-->
+            <GridLayout
+                android:layout_height="304dp"
+                android:layout_width="304dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="4dp"
+                android:columnCount="8"
+                android:rowCount="8">
+                <!--Row 1-->
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_rook"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp" android:background="@drawable/black_bishop"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp" android:background="@drawable/black_queen"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp" android:background="@drawable/black_king"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_knight"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_rook"/>
+                </LinearLayout>
+                <!--Row 2-->
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                </LinearLayout>
+                <!--Row 3-->
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_knight"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <!--Row 4-->
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <!--Row 5-->
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp" android:background="@drawable/white_bishop"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <!--Row 6-->
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_bishop"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_knight"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <!--Row 7-->
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                </LinearLayout>
+                <!--Row 8-->
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_rook"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_knight"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_bishop"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_queen"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_king"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
+                    <ImageView android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_rook"/>
+                </LinearLayout>
+            </GridLayout>
+
+        </LinearLayout>
+        <!--Move List-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/colorBoardDark">
+            <LinearLayout
+                android:id="@+id/option1"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:padding="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="@color/colorBoardLight">
+                <!--Piece Image-->
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/white_pawn"/>
+                <!--Current Square-->
+                <TextView
+                    android:layout_width="38dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="30sp"
+                    android:text="D2"/>
+                <!--Next Square-->
+                <TextView
+                    android:layout_width="55dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginStart="19dp"
+                    android:textSize="30sp"
+                    android:text="e3"/>
+                <!--Pct Win-->
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/colorWin"
+                    android:textSize="30sp"
+                    android:text="52%"/>
+                <!--Pct Tie-->
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorTie"
+                    android:textSize="30sp"
+                    android:text="15%"/>
+                <!--Pct Lose-->
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorLose"
+                    android:textSize="30sp"
+                    android:text="33%"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:padding="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="@color/colorBoardLight">
+                <!--Piece Image-->
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/white_pawn"/>
+                <!--Current Square-->
+                <TextView
+                    android:layout_width="38dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="30sp"
+                    android:text="F2"/>
+                <!--Next Square-->
+                <TextView
+                    android:layout_width="55dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginStart="19dp"
+                    android:textSize="30sp"
+                    android:text="e3"/>
+                <!--Pct Win-->
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/colorWin"
+                    android:textSize="30sp"
+                    android:text="54%"/>
+                <!--Pct Tie-->
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorTie"
+                    android:textSize="30sp"
+                    android:text="10%"/>
+                <!--Pct Lose-->
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorLose"
+                    android:textSize="30sp"
+                    android:text="36%"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:padding="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="@color/colorBoardLight">
+                <!--Piece Image-->
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/white_knight"/>
+                <!--Current Square-->
+                <TextView
+                    android:layout_width="38dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="30sp"
+                    android:text="B1"/>
+                <!--Next Square-->
+                <TextView
+                    android:layout_width="55dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginStart="19dp"
+                    android:textSize="30sp"
+                    android:text="Nc3"/>
+                <!--Pct Win-->
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/colorWin"
+                    android:textSize="30sp"
+                    android:text="32%"/>
+                <!--Pct Tie-->
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorTie"
+                    android:textSize="30sp"
+                    android:text="3%"/>
+                <!--Pct Lose-->
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/colorLose"
+                    android:textSize="30sp"
+                    android:text="65%"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
