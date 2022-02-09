@@ -1,4 +1,4 @@
-package com.example.chess;
+package com.example.chessvision2;
 
 import android.support.v4.app.INotificationSideChannel;
 import android.support.v4.os.IResultReceiver;
