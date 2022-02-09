@@ -1,4 +1,4 @@
-package com.example.chess;
+package com.example.chessvision2;
 
 public class ChessPiece {
     private int col, row;
