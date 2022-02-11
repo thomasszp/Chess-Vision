@@ -7,4 +7,6 @@
     <color name="colorWin">#169873</color>
     <color name="colorTie">#8A8A8A</color>
     <color name="colorLose">#CF002D</color>
+    <color name="colorPieceWhite">#B39365</color>
+    <color name="colorPieceBlack">#303030</color>
 </resources>
