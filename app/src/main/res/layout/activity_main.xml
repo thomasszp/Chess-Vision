@@ -350,14 +350,15 @@
                     android:layout_width="70dp"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:background="@drawable/black_queen"/>
+                    android:background="@drawable/black_queen"
+                    android:tag="black_queen"/>
                 <!--Current Square-->
                 <TextView
                     android:layout_width="38dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textSize="30sp"
-                    android:text="B8"/>
+                    android:text="D8"/>
                 <!--Arrow-->
                 <TextView
                     android:layout_width="wrap_content"
@@ -410,7 +411,8 @@
                     android:layout_width="70dp"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:background="@drawable/black_knight"/>
+                    android:background="@drawable/black_knight"
+                    android:tag="black_knight"/>
                 <!--Current Square-->
                 <TextView
                     android:layout_width="38dp"
