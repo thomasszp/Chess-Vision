@@ -47,6 +47,20 @@ public class MainActivity extends AppCompatActivity {
                 GetNewMoves();
             }
         });
+        option2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NextMove((LinearLayout) view);
+                GetNewMoves();
+            }
+        });
+        option3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NextMove((LinearLayout) view);
+                GetNewMoves();
+            }
+        });
 
         // Load past move into array for dropdown
         pastMoves = Arrays.copyOf(pastMoves, pastMoves.length + 1);
@@ -66,25 +80,38 @@ public class MainActivity extends AppCompatActivity {
         TextView nextSquareView = (TextView) option.getChildAt(3);
 
         // Get views by ID in string form
-        String currentSquareText = (String) currentSquareView.getText();
-        String nextSquareText = (String) nextSquareView.getText();
-        int currentSquareID = getResources().getIdentifier(currentSquareText, "id", getPackageName());
-        int nextSquareID = getResources().getIdentifier(nextSquareText, "id", getPackageName());
+        int currentSquareID = getResources().getIdentifier((String) currentSquareView.getText(), "id", getPackageName());
+        int nextSquareID = getResources().getIdentifier((String) nextSquareView.getText(), "id", getPackageName());
         ImageView currentSquare = findViewById(currentSquareID);
         ImageView nextSquare = findViewById(nextSquareID);
 
         // Put piece into nextSquare, remove piece from currentSquare
-        nextSquare.setBackgroundResource(getResources().getIdentifier((String) pieceImage.getTag(), "drawable", getPackageName()));
+        nextSquare.setBackgroundResource(getResources().getIdentifier((String) pieceImage.getTag(), "drawable", getPackageName()));;
         currentSquare.setBackgroundResource(0);
+
+        // Set move in prev moves dropdown
+        String tmp = "";
+        if (((String) pieceImage.getTag()).contains("bishop")) {
+            tmp = "B";
+        } else if (((String) pieceImage.getTag()).contains("queen")) {
+            tmp = "Q";
+        } else if (((String) pieceImage.getTag()).contains("king")) {
+            tmp = "K";
+        } else if (((String) pieceImage.getTag()).contains("rook")) {
+            tmp = "R";
+        } else if (((String) pieceImage.getTag()).contains("knight")) {
+            tmp = "N";
+        } else if (((String) pieceImage.getTag()).contains("pawn")) {
+            tmp = "";
+        }
+        tmp += ((String) nextSquareView.getText()).toLowerCase();
+        pastMoves = Arrays.copyOf(pastMoves, pastMoves.length + 1);
+        pastMoves[1] = pastMoves[0];
+        pastMoves[0] = tmp;
+        SetDropdown();
     }
 
     private void GetNewMoves() {
-        // Set new dropdown move
-        pastMoves = Arrays.copyOf(pastMoves, pastMoves.length + 1);
-        pastMoves[1] = pastMoves[0];
-        pastMoves[0] = "Be3";
-        SetDropdown();
-
         // Generate new moves as options
         ImageView pieceImage = (ImageView) option1.getChildAt(0);
         TextView currentSquareView = (TextView) option1.getChildAt(1);
@@ -94,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         TextView lossPct = (TextView) option1.getChildAt(6);
 
         pieceImage.setBackgroundResource(R.drawable.white_pawn);
+        pieceImage.setTag("white_pawn");
         currentSquareView.setText("F2");
         nextSquareView.setText("E3");
         winPct.setText("52%");
@@ -108,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         lossPct = (TextView) option2.getChildAt(6);
 
         pieceImage.setBackgroundResource(R.drawable.white_pawn);
+        pieceImage.setTag("white_pawn");
         currentSquareView.setText("D2");
         nextSquareView.setText("E3");
         winPct.setText("51%");
@@ -122,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
         lossPct = (TextView) option3.getChildAt(6);
 
         pieceImage.setBackgroundResource(R.drawable.white_knight);
+        pieceImage.setTag("white_knight");
         currentSquareView.setText("A2");
         nextSquareView.setText("C3");
         winPct.setText("42%");
