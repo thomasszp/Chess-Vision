@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_gravity="center_horizontal">
     <androidx.appcompat.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -34,13 +35,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="center_horizontal">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="">
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -268,197 +268,209 @@
                     <ImageView android:id="@+id/H1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_rook"/>
                 </LinearLayout>
             </GridLayout>
+        </LinearLayout>
 
-        </LinearLayout>
         <!--Move List-->
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/colorBoardDark">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
             <LinearLayout
-                android:id="@+id/option1"
+                android:id="@+id/optionLayout"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:padding="5dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:background="@color/colorBoardLight">
-                <!--Piece Image-->
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/black_bishop"
-                    android:tag="black_bishop"/>
-                <!--Current Square-->
-                <TextView
-                    android:layout_width="38dp"
-                    android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/colorBoardDark">
+                <!--Placeholder Option-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
                     android:gravity="center"
-                    android:textSize="30sp"
-                    android:text="C5"/>
-                <!--Arrow-->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@color/colorBoardLight">
+                    <!--Piece Image-->
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/black_bishop"
+                        android:tag="black_bishop"/>
+                    <!--Current Square-->
+                    <TextView
+                        android:layout_width="38dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textSize="30sp"
+                        android:text="C5"/>
+                    <!--Arrow-->
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/arrow_right"/>
+                    <!--Next Square-->
+                    <TextView
+                        android:layout_width="38dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textSize="30sp"
+                        android:text="E3"/>
+                    <!--Pct Win-->
+                    <TextView
+                        android:layout_width="73dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:gravity="center"
+                        android:textColor="@color/colorWin"
+                        android:textSize="30sp"
+                        android:text="60%"/>
+                    <!--Pct Tie-->
+                    <TextView
+                        android:layout_width="73dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/colorTie"
+                        android:textSize="30sp"
+                        android:text="10%"/>
+                    <!--Pct Lose-->
+                    <TextView
+                        android:layout_width="73dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/colorLose"
+                        android:textSize="30sp"
+                        android:text="30%"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
                     android:gravity="center"
-                    android:textSize="22sp"
-                    android:text=" ->"/>
-                <!--Next Square-->
-                <TextView
-                    android:layout_width="55dp"
-                    android:layout_height="match_parent"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@color/colorBoardLight">
+                    <!--Piece Image-->
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/black_queen"
+                        android:tag="black_queen"/>
+                    <!--Current Square-->
+                    <TextView
+                        android:layout_width="38dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textSize="30sp"
+                        android:text="D8"/>
+                    <!--Arrow-->
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:background="@drawable/arrow_right"/>
+                    <!--Next Square-->
+                    <TextView
+                        android:layout_width="38dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textSize="30sp"
+                        android:text="F6"/>
+                    <!--Pct Win-->
+                    <TextView
+                        android:layout_width="73dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:textColor="@color/colorWin"
+                        android:textSize="30sp"
+                        android:text="47%"/>
+                    <!--Pct Tie-->
+                    <TextView
+                        android:layout_width="73dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/colorTie"
+                        android:textSize="30sp"
+                        android:text="5%"/>
+                    <!--Pct Lose-->
+                    <TextView
+                        android:layout_width="73dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/colorLose"
+                        android:textSize="30sp"
+                        android:text="48%"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
                     android:gravity="center"
-                    android:textSize="30sp"
-                    android:text="E3"/>
-                <!--Pct Win-->
-                <TextView
-                    android:layout_width="73dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@color/colorWin"
-                    android:textSize="30sp"
-                    android:text="60%"/>
-                <!--Pct Tie-->
-                <TextView
-                    android:layout_width="73dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@color/colorTie"
-                    android:textSize="30sp"
-                    android:text="10%"/>
-                <!--Pct Lose-->
-                <TextView
-                    android:layout_width="73dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@color/colorLose"
-                    android:textSize="30sp"
-                    android:text="30%"/>
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@color/colorBoardLight">
+                    <!--Piece Image-->
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/black_knight"
+                        android:tag="black_knight"/>
+                    <!--Current Square-->
+                    <TextView
+                        android:layout_width="38dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textSize="30sp"
+                        android:text="C6"/>
+                    <!--Arrow-->
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:background="@drawable/arrow_right"/>
+                    <!--Next Square-->
+                    <TextView
+                        android:layout_width="38dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textSize="30sp"
+                        android:text="B4"/>
+                    <!--Pct Win-->
+                    <TextView
+                        android:layout_width="73dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:textColor="@color/colorWin"
+                        android:textSize="30sp"
+                        android:text="56%"/>
+                    <!--Pct Tie-->
+                    <TextView
+                        android:layout_width="73dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/colorTie"
+                        android:textSize="30sp"
+                        android:text="15%"/>
+                    <!--Pct Lose-->
+                    <TextView
+                        android:layout_width="73dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/colorLose"
+                        android:textSize="30sp"
+                        android:text="29%"/>
+                </LinearLayout>
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/option2"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:padding="5dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:background="@color/colorBoardLight">
-                <!--Piece Image-->
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/black_queen"
-                    android:tag="black_queen"/>
-                <!--Current Square-->
-                <TextView
-                    android:layout_width="38dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="30sp"
-                    android:text="D8"/>
-                <!--Arrow-->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textSize="22sp"
-                    android:text=" ->"/>
-                <!--Next Square-->
-                <TextView
-                    android:layout_width="55dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="30sp"
-                    android:text="F6"/>
-                <!--Pct Win-->
-                <TextView
-                    android:layout_width="73dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@color/colorWin"
-                    android:textSize="30sp"
-                    android:text="47%"/>
-                <!--Pct Tie-->
-                <TextView
-                    android:layout_width="73dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@color/colorTie"
-                    android:textSize="30sp"
-                    android:text="5%"/>
-                <!--Pct Lose-->
-                <TextView
-                    android:layout_width="73dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@color/colorLose"
-                    android:textSize="30sp"
-                    android:text="48%"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/option3"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:padding="5dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:background="@color/colorBoardLight">
-                <!--Piece Image-->
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/black_knight"
-                    android:tag="black_knight"/>
-                <!--Current Square-->
-                <TextView
-                    android:layout_width="38dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="30sp"
-                    android:text="C6"/>
-                <!--Arrow-->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textSize="22sp"
-                    android:text=" ->"/>
-                <!--Next Square-->
-                <TextView
-                    android:layout_width="55dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="30sp"
-                    android:text="B4"/>
-                <!--Pct Win-->
-                <TextView
-                    android:layout_width="73dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@color/colorWin"
-                    android:textSize="30sp"
-                    android:text="56%"/>
-                <!--Pct Tie-->
-                <TextView
-                    android:layout_width="73dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@color/colorTie"
-                    android:textSize="30sp"
-                    android:text="15%"/>
-                <!--Pct Lose-->
-                <TextView
-                    android:layout_width="73dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@color/colorLose"
-                    android:textSize="30sp"
-                    android:text="29%"/>
-            </LinearLayout>
-        </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>
