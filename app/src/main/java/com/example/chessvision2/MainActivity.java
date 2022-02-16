@@ -1,6 +1,9 @@
 package com.example.chessvision2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.Debug;
+
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,6 +17,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.IOError;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
@@ -57,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
         pastMoves = Arrays.copyOf(pastMoves, pastMoves.length + 1);
         pastMoves[pastMoves.length - 1] = "Kc6";
         SetDropdown();
+
+        // Test loading the board from FEN
+        try {
+            //LoadBoardFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
+            //LoadBoardFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
+            LoadBoardFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         exampleBoard.addPiece(examplePiece);
         exampleBoard.addPiece(examplePiece2);
@@ -152,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         pieceImage.setScaleType(ScaleType.CENTER_CROP);
         pieceImage.setBackgroundResource(getResources().getIdentifier((String) pieceName, "drawable", getPackageName()));
         pieceImage.setTag(pieceName);
-        option.addView(pieceImage);
 
         //   Piece current square location
         TextView currSquare = new TextView(this);
@@ -160,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
         currSquare.setGravity(Gravity.CENTER);
         currSquare.setTextSize(30);
         currSquare.setText(currSquareText);
-        option.addView(currSquare);
 
         //   Arrow image
         ImageView arrowImage = new ImageView(this);
@@ -168,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
         arrowImageParams.gravity = Gravity.CENTER;
         arrowImage.setLayoutParams(arrowImageParams);
         arrowImage.setBackgroundResource(R.drawable.arrow_right);
-        option.addView(arrowImage);
 
         //   Piece next square location
         TextView nextSquare = new TextView(this);
@@ -176,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
         nextSquare.setGravity(Gravity.CENTER_VERTICAL);
         nextSquare.setTextSize(30);
         nextSquare.setText(nextSquareText);
-        option.addView(nextSquare);
 
         //   in percentage
         TextView pctWin = new TextView(this);
@@ -187,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
         pctWin.setTextColor(getResources().getColor(R.color.colorWin));
         pctWin.setTextSize(30);
         pctWin.setText(String.format(Locale.US, "%d%%", pctWinValue));
-        option.addView(pctWin);
 
         //   Tie percentage
         TextView pctTie = new TextView(this);
@@ -196,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
         pctTie.setTextColor(getResources().getColor(R.color.colorTie));
         pctTie.setTextSize(30);
         pctTie.setText(String.format(Locale.US, "%d%%", pctTieValue));
-        option.addView(pctTie);
 
         //   Loss percentage
         TextView pctLoss = new TextView(this);
@@ -205,13 +213,94 @@ public class MainActivity extends AppCompatActivity {
         pctLoss.setTextColor(getResources().getColor(R.color.colorLose));
         pctLoss.setTextSize(30);
         pctLoss.setText(String.format(Locale.US, "%d%%", pctLossValue));
-        option.addView(pctLoss);
 
+        // Add everything to the new option and return it
+        option.addView(pieceImage);
+        option.addView(currSquare);
+        option.addView(arrowImage);
+        option.addView(nextSquare);
+        option.addView(pctWin);
+        option.addView(pctTie);
+        option.addView(pctLoss);
         return option;
     }
 
-    // Read and load a board state from an FEN string
-    private void LoadBoardFromFEN(String fen) {
+    private void SetGridSpace(char piece, int col, int row, boolean isDigit) throws IOException {
+        String tmp = String.valueOf(GetColLetter(col)) + row;
+        int gridID = getResources().getIdentifier(String.valueOf(GetColLetter(col)) + row, "id", getPackageName());
+        if (isDigit) {  //Add blank spaces to the grid
+            for (int i = 0; i < Character.getNumericValue(piece); i++) {
+                gridID = getResources().getIdentifier(String.valueOf(GetColLetter(col+i)) + row, "id", getPackageName());
+                ImageView pieceImage = findViewById(gridID);
+                pieceImage.setBackgroundResource(0);
+            }
+        } else {        //Add piece to that grid spot
+            ImageView pieceImage = findViewById(gridID);
+            pieceImage.setBackgroundResource(getResources().getIdentifier((String) GetPieceName(piece), "drawable", getPackageName()));
+        }
+    }
 
+    private String GetPieceName(char piece) throws IOException {
+        switch (piece) {
+            case 'p': return "black_pawn";
+            case 'r': return "black_rook";
+            case 'n': return "black_knight";
+            case 'b': return "black_bishop";
+            case 'q': return "black_queen";
+            case 'k': return "black_king";
+            case 'P': return "white_pawn";
+            case 'R': return "white_rook";
+            case 'N': return "white_knight";
+            case 'B': return "white_bishop";
+            case 'Q': return "white_queen";
+            case 'K': return "white_king";
+            default: throw new IOException("Unexpected piece letter");
+        }
+    }
+
+    // Read and load a board state from an FEN string
+    private void LoadBoardFromFEN(String fen) throws IOException {
+        String[] fenArr = fen.split(" ",2);
+        String fenPieces = fenArr[0];           //Cut off extra data
+        String fenExtra = fenArr[1];            //Get extra data (turn, castling ability, en passant, move clock)
+        String[] rows = fenPieces.split("/");   //Split fen into each row
+
+        // Loop through each row/col and set the image based on the FEN letter/digit
+        int gridRow = 8, gridCol = 0;
+        for (String row: rows) {
+            gridCol = 0;
+            for (char piece: row.toCharArray()) {
+                if (Character.isDigit(piece)) { //Digit = num of spaces to leave blank in a row
+                    SetGridSpace(piece, gridCol, gridRow, true);
+                    gridCol += Character.getNumericValue(piece);      //Add the number of cols you're leaving blank
+                } else {        //Non-digit = piece abbrev, just add that piece to the given col/row
+                    SetGridSpace(piece, gridCol, gridRow, false);
+                    gridCol++;  //Only need to increment one at a time
+                }
+            }
+            gridRow--;
+        }
+        // TODO: Set the extra data from fenExtra
+    }
+
+    // Return column letter from given column number, zero indexed
+    private char GetColLetter(int col) {
+        if (col == 0) {
+            return 'A';
+        } else if (col == 1) {
+            return 'B';
+        } else if (col == 2) {
+            return 'C';
+        } else if (col == 3) {
+            return 'D';
+        } else if (col == 4) {
+            return 'E';
+        } else if (col == 5) {
+            return 'F';
+        } else if (col == 6) {
+            return 'G';
+        } else {
+            return 'H';
+        }
     }
 }
