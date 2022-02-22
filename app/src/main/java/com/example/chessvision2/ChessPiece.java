@@ -5,7 +5,7 @@ public class ChessPiece {
     private ChessPlayer player;
     private ChessType type;
 
-    public ChessPiece(int newCol, int newRow, ChessPlayer newPlayer, ChessType newType) {
+    public ChessPiece(int newRow, int newCol, ChessPlayer newPlayer, ChessType newType) {
         col = newCol;
         row = newRow;
         player = newPlayer;
@@ -16,6 +16,7 @@ public class ChessPiece {
     public int getRow() {return row;}
     public ChessPlayer getPlayer() {return player;}
     public ChessType getType() {return type;}
-
+    public void setCol(int newCol) {col = newCol;}
+    public void setRow(int newRow) {row = newRow;}
 
 }
