@@ -1,9 +1,6 @@
 package com.example.chessvision2;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.motion.widget.Debug;
-
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,7 +14,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
@@ -28,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout optionLayout;                  //LinearLayout housing all options
     View.OnClickListener optionListener;        //Listener for all options
     Spinner prevMovesDropdown;                  //Spinner for previously executed moves in descending order
-    String[] pastMoves = {};                    //Array of all past moves, adapted into spinner dynamically
+    String[] prevMoves = {};                    //Array of all past moves, adapted into spinner dynamically
     ArrayAdapter<String> spinnerArrayAdapter;   //Spinner adapter
     ChessBoard exampleBoard = new ChessBoard();
     ChessPiece examplePiece = new ChessPiece(1, 1, ChessPlayer.WHITE, ChessType.KING);
@@ -39,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Objects.requireNonNull(getSupportActionBar()).hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();   //Hide default toolbar
 
-        // Load all XML controls
+        // Load all XML controls into variables
         optionLayout = findViewById(R.id.optionLayout);
         prevMovesDropdown = findViewById(R.id.prevMoves);
 
@@ -59,9 +55,8 @@ public class MainActivity extends AppCompatActivity {
         SetHardcodedOptions();
 
         // Load past move into array for dropdown
-        pastMoves = Arrays.copyOf(pastMoves, pastMoves.length + 1);
-        pastMoves[pastMoves.length - 1] = "Kc6";
-        SetDropdown();
+        AddPrevMove("Nc6");
+        LoadPrevMoveSpinner();
 
         // Test loading the board from FEN
         try {
@@ -75,6 +70,12 @@ public class MainActivity extends AppCompatActivity {
         exampleBoard.addPiece(examplePiece);
         exampleBoard.addPiece(examplePiece2);
         Log.d(TAG, exampleBoard.toString());
+    }
+
+    // Add new previously made move signature (in PGN) to the prevMoves array
+    private void AddPrevMove(String newMove) {
+        prevMoves = Arrays.copyOf(prevMoves, prevMoves.length + 1); //Add new array element
+        prevMoves[prevMoves.length-1] = newMove;
     }
 
     // Execute the selected move. This is called from an option's listener
@@ -109,10 +110,8 @@ public class MainActivity extends AppCompatActivity {
             tmp = "";
         }
         tmp += ((String) nextSquareView.getText()).toLowerCase();
-        pastMoves = Arrays.copyOf(pastMoves, pastMoves.length + 1);
-        pastMoves[1] = pastMoves[0];
-        pastMoves[0] = tmp;
-        SetDropdown();
+        AddPrevMove(tmp);
+        LoadPrevMoveSpinner();
     }
 
     // Fetch a list of possible next moves from the DB
@@ -126,13 +125,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Link the array of previous moves to the Spinner
-    private void SetDropdown() {
-        spinnerArrayAdapter = new ArrayAdapter<>
-                (this, R.layout.spinner_item,
-                        pastMoves); //selected item will look like a spinner set from XML
-        spinnerArrayAdapter.setDropDownViewResource(R.layout
-                .spinner_item);
+    private void LoadPrevMoveSpinner() {
+        spinnerArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, prevMoves);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         prevMovesDropdown.setAdapter(spinnerArrayAdapter);
+        prevMovesDropdown.setSelection(prevMoves.length-1);
     }
 
     // Generate a list of hardcoded options for use in demos
@@ -225,17 +222,13 @@ public class MainActivity extends AppCompatActivity {
         return option;
     }
 
-    private void SetGridSpace(char piece, int col, int row, boolean isDigit) throws IOException {
+    private void SetGridSpace(char piece, int col, int row) throws IOException {
         String tmp = String.valueOf(GetColLetter(col)) + row;
         int gridID = getResources().getIdentifier(String.valueOf(GetColLetter(col)) + row, "id", getPackageName());
-        if (isDigit) {  //Add blank spaces to the grid
-            for (int i = 0; i < Character.getNumericValue(piece); i++) {
-                gridID = getResources().getIdentifier(String.valueOf(GetColLetter(col+i)) + row, "id", getPackageName());
-                ImageView pieceImage = findViewById(gridID);
-                pieceImage.setBackgroundResource(0);
-            }
-        } else {        //Add piece to that grid spot
-            ImageView pieceImage = findViewById(gridID);
+        ImageView pieceImage = findViewById(gridID);
+        if (piece == ' ') { //Add blank space to the grid spot
+            pieceImage.setBackgroundResource(0);
+        } else {            //Add piece to that grid spot
             pieceImage.setBackgroundResource(getResources().getIdentifier((String) GetPieceName(piece), "drawable", getPackageName()));
         }
     }
@@ -271,10 +264,12 @@ public class MainActivity extends AppCompatActivity {
             gridCol = 0;
             for (char piece: row.toCharArray()) {
                 if (Character.isDigit(piece)) { //Digit = num of spaces to leave blank in a row
-                    SetGridSpace(piece, gridCol, gridRow, true);
-                    gridCol += Character.getNumericValue(piece);      //Add the number of cols you're leaving blank
+                    int startCol = gridCol;
+                    for (; gridCol < startCol + Character.getNumericValue(piece); gridCol++) {
+                        SetGridSpace(' ', gridCol, gridRow);
+                    }
                 } else {        //Non-digit = piece abbrev, just add that piece to the given col/row
-                    SetGridSpace(piece, gridCol, gridRow, false);
+                    SetGridSpace(piece, gridCol, gridRow);
                     gridCol++;  //Only need to increment one at a time
                 }
             }
@@ -285,22 +280,15 @@ public class MainActivity extends AppCompatActivity {
 
     // Return column letter from given column number, zero indexed
     private char GetColLetter(int col) {
-        if (col == 0) {
-            return 'A';
-        } else if (col == 1) {
-            return 'B';
-        } else if (col == 2) {
-            return 'C';
-        } else if (col == 3) {
-            return 'D';
-        } else if (col == 4) {
-            return 'E';
-        } else if (col == 5) {
-            return 'F';
-        } else if (col == 6) {
-            return 'G';
-        } else {
-            return 'H';
+        switch (col) {
+            case 0: return 'A';
+            case 1: return 'B';
+            case 2: return 'C';
+            case 3: return 'D';
+            case 4: return 'E';
+            case 5: return 'F';
+            case 6: return 'G';
+            default: return 'H';
         }
     }
 }
