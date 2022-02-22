@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "mainTag";
     LinearLayout optionLayout;                  //LinearLayout housing all options
@@ -70,6 +71,24 @@ public class MainActivity extends AppCompatActivity {
         exampleBoard.addPiece(examplePiece);
         exampleBoard.addPiece(examplePiece2);
         Log.d(TAG, exampleBoard.toString());
+    }
+
+    //loads frontend board from board object currently in use
+    private void loadBoard(ChessBoard board) {
+        //clear board
+        clearBoard();
+
+        //put all pieces on new board
+        for (ChessPiece piece : board.getPieces()) {
+            SetGridSpace(piece, piece.getRow(), piece.getCol());
+        }
+
+    }
+
+    //TODO: CLEAR FRONTEND OF ALL IMAGES
+    //please write this adam
+    private void clearBoard() {
+
     }
 
     // Add new previously made move signature (in PGN) to the prevMoves array
@@ -223,31 +242,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SetGridSpace(char piece, int col, int row) throws IOException {
+        boardArray[0, 5]; //create 2d array of allard id's
         String tmp = String.valueOf(GetColLetter(col)) + row;
         int gridID = getResources().getIdentifier(String.valueOf(GetColLetter(col)) + row, "id", getPackageName());
         ImageView pieceImage = findViewById(gridID);
         if (piece == ' ') { //Add blank space to the grid spot
             pieceImage.setBackgroundResource(0);
         } else {            //Add piece to that grid spot
-            pieceImage.setBackgroundResource(getResources().getIdentifier((String) GetPieceName(piece), "drawable", getPackageName()));
-        }
-    }
-
-    private String GetPieceName(char piece) throws IOException {
-        switch (piece) {
-            case 'p': return "black_pawn";
-            case 'r': return "black_rook";
-            case 'n': return "black_knight";
-            case 'b': return "black_bishop";
-            case 'q': return "black_queen";
-            case 'k': return "black_king";
-            case 'P': return "white_pawn";
-            case 'R': return "white_rook";
-            case 'N': return "white_knight";
-            case 'B': return "white_bishop";
-            case 'Q': return "white_queen";
-            case 'K': return "white_king";
-            default: throw new IOException("Unexpected piece letter");
+            pieceImage.setBackgroundResource(getResources().getIdentifier((String) findPieceName(piece), "drawable", getPackageName()));
         }
     }
 
