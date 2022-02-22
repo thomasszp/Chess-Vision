@@ -1,7 +1,6 @@
 package com.example.chessvision2;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         spinnerArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, prevMoves);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         prevMovesDropdown.setAdapter(spinnerArrayAdapter);
-        prevMovesDropdown.setSelection(prevMoves.length-1); //TODO: Test this for off-by-one bug
+        prevMovesDropdown.setSelection(prevMoves.length-1);
     }
 
     // Generate a list of hardcoded options for use in demos
@@ -265,7 +264,8 @@ public class MainActivity extends AppCompatActivity {
             gridCol = 0;
             for (char piece: row.toCharArray()) {
                 if (Character.isDigit(piece)) { //Digit = num of spaces to leave blank in a row
-                    for (; gridCol < gridCol + Character.getNumericValue(piece); gridCol++) {   //TODO: Test this for bugs
+                    int startCol = gridCol;
+                    for (; gridCol < startCol + Character.getNumericValue(piece); gridCol++) {
                         SetGridSpace(' ', gridCol, gridRow);
                     }
                 } else {        //Non-digit = piece abbrev, just add that piece to the given col/row
