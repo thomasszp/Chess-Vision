@@ -19,6 +19,10 @@ public class ChessBoard {
     //default constructor i guess
     public ChessBoard() {}
 
+    public List<ChessPiece> getPieces() {
+        return allPieces;
+    }
+
     //resets board to default state
     public void wipeBoard() {
         allPieces.clear();

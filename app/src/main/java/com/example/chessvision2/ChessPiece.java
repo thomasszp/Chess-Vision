@@ -19,4 +19,34 @@ public class ChessPiece {
     public void setCol(int newCol) {col = newCol;}
     public void setRow(int newRow) {row = newRow;}
 
+
+    public String findPieceName() {
+        switch (type) {
+            case PAWN:
+                if (player == ChessPlayer.BLACK)
+                    return "black_pawn";
+                return "white_pawn";
+            case KNIGHT:
+                if (player == ChessPlayer.BLACK)
+                    return "black_knight";
+                return "white_knight";
+            case BISHOP:
+                if (player == ChessPlayer.BLACK)
+                    return "black_bishop";
+                return "white_bishop";
+            case ROOK:
+                if (player == ChessPlayer.BLACK)
+                    return "black_rook";
+                return "white_rook";
+            case KING:
+                if (player == ChessPlayer.BLACK)
+                    return "black_king";
+                return "white_king";
+            case QUEEN:
+                if (player == ChessPlayer.BLACK)
+                    return "black_queen";
+                return "white_queen";
+        }
+        return null;
+    }
 }

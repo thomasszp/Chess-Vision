@@ -21,15 +21,22 @@ import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String [][] boardSquares = {
+            {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"},
+            {"A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"},
+            {"A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"},
+            {"A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4"},
+            {"A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5"},
+            {"A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6"},
+            {"A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"},
+            {"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"}};
     private static final String TAG = "mainTag";
     LinearLayout optionLayout;                  //LinearLayout housing all options
     View.OnClickListener optionListener;        //Listener for all options
     Spinner prevMovesDropdown;                  //Spinner for previously executed moves in descending order
     String[] prevMoves = {};                    //Array of all past moves, adapted into spinner dynamically
     ArrayAdapter<String> spinnerArrayAdapter;   //Spinner adapter
-    ChessBoard exampleBoard = new ChessBoard();
-    ChessPiece examplePiece = new ChessPiece(1, 1, ChessPlayer.WHITE, ChessType.KING);
-    ChessPiece examplePiece2 = new ChessPiece(5, 2, ChessPlayer.BLACK, ChessType.QUEEN);
+    //ChessBoard exampleBoard = new ChessBoard();
 
     @Override
     // General onCreate function. This runs when the app launches
@@ -37,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();   //Hide default toolbar
+        ChessBoard baseBoard = new ChessBoard();
 
         // Load all XML controls into variables
         optionLayout = findViewById(R.id.optionLayout);
@@ -63,14 +71,13 @@ public class MainActivity extends AppCompatActivity {
         try {
             //LoadBoardFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
             //LoadBoardFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
-            LoadBoardFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
-        } catch (IOException e) {
+            baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+            //LoadBoardFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        exampleBoard.addPiece(examplePiece);
-        exampleBoard.addPiece(examplePiece2);
-        Log.d(TAG, exampleBoard.toString());
+        Log.d(TAG, baseBoard.toString());
     }
 
     //loads frontend board from board object currently in use
@@ -89,6 +96,20 @@ public class MainActivity extends AppCompatActivity {
     //please write this adam
     private void clearBoard() {
 
+    }
+
+    private void SetGridSpace(ChessPiece piece, int col, int row) {
+        //String tmp = String.valueOf(GetColLetter(col)) + row;
+//        int gridID = getResources().getIdentifier(String.valueOf(GetColLetter(col)) + row, "id", getPackageName());
+//        ImageView pieceImage = findViewById(gridID);
+//        if (piece == ' ') { //Add blank space to the grid spot
+//            pieceImage.setBackgroundResource(0);
+//        } else {            //Add piece to that grid spot
+//            pieceImage.setBackgroundResource(getResources().getIdentifier((String) findPieceName(piece), "drawable", getPackageName()));
+//        }
+        int gridID = getResources().getIdentifier(boardSquares[row][col], "id", getPackageName());
+        ImageView pieceImage = findViewById(gridID);
+        pieceImage.setBackgroundResource(getResources().getIdentifier((String) piece.findPieceName(), "drawable", getPackageName()));
     }
 
     // Add new previously made move signature (in PGN) to the prevMoves array
@@ -241,45 +262,7 @@ public class MainActivity extends AppCompatActivity {
         return option;
     }
 
-    private void SetGridSpace(char piece, int col, int row) throws IOException {
-        boardArray[0, 5]; //create 2d array of allard id's
-        String tmp = String.valueOf(GetColLetter(col)) + row;
-        int gridID = getResources().getIdentifier(String.valueOf(GetColLetter(col)) + row, "id", getPackageName());
-        ImageView pieceImage = findViewById(gridID);
-        if (piece == ' ') { //Add blank space to the grid spot
-            pieceImage.setBackgroundResource(0);
-        } else {            //Add piece to that grid spot
-            pieceImage.setBackgroundResource(getResources().getIdentifier((String) findPieceName(piece), "drawable", getPackageName()));
-        }
-    }
-
-    // Read and load a board state from an FEN string
-    private void LoadBoardFromFEN(String fen) throws IOException {
-        String[] fenArr = fen.split(" ",2);
-        String fenPieces = fenArr[0];           //Cut off extra data
-        String fenExtra = fenArr[1];            //Get extra data (turn, castling ability, en passant, move clock)
-        String[] rows = fenPieces.split("/");   //Split fen into each row
-
-        // Loop through each row/col and set the image based on the FEN letter/digit
-        int gridRow = 8, gridCol = 0;
-        for (String row: rows) {
-            gridCol = 0;
-            for (char piece: row.toCharArray()) {
-                if (Character.isDigit(piece)) { //Digit = num of spaces to leave blank in a row
-                    int startCol = gridCol;
-                    for (; gridCol < startCol + Character.getNumericValue(piece); gridCol++) {
-                        SetGridSpace(' ', gridCol, gridRow);
-                    }
-                } else {        //Non-digit = piece abbrev, just add that piece to the given col/row
-                    SetGridSpace(piece, gridCol, gridRow);
-                    gridCol++;  //Only need to increment one at a time
-                }
-            }
-            gridRow--;
-        }
-        // TODO: Set the extra data from fenExtra
-    }
-
+    //Should be deprecated -tom
     // Return column letter from given column number, zero indexed
     private char GetColLetter(int col) {
         switch (col) {
