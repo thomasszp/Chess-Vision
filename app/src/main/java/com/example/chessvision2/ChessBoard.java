@@ -3,7 +3,6 @@ package com.example.chessvision2;
 import android.support.v4.app.INotificationSideChannel;
 import android.support.v4.os.IResultReceiver;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +37,7 @@ public class ChessBoard {
     // only used when creating boards from scratch (probably)
     public void addPiece(ChessPiece piece) { allPieces.add(piece); }
 
-    public void generateFromFEN(String FEN) throws IOException {
+    public void generateFromFEN(String FEN) {
         wipeBoard();
         String board = FEN.split(" ", 2)[0];
         String extra = FEN.split(" ", 2)[1];
@@ -54,7 +53,7 @@ public class ChessBoard {
                 if (Character.isDigit(piece)) {
                     rowIndex += Character.getNumericValue(piece);
                 } else {
-                    allPieces.add(new ChessPiece(rowIndex, colIndex, getPlayer(piece), getType(piece), piece));
+                    allPieces.add(new ChessPiece(rowIndex, colIndex, getPlayer(piece), getType(piece)));
                     rowIndex++;
                 }
             }
