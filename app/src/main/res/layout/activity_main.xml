@@ -69,53 +69,53 @@
                 android:rowCount="8">
                 <!--Row 1-->
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/A8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_rook"/>
+                    <ImageView android:id="@+id/A8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
                     <ImageView android:id="@+id/B8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/C8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp" android:background="@drawable/black_bishop"/>
+                    <ImageView android:id="@+id/C8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/D8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp" android:background="@drawable/black_queen"/>
+                    <ImageView android:id="@+id/D8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/E8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp" android:background="@drawable/black_king"/>
+                    <ImageView android:id="@+id/E8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
                     <ImageView android:id="@+id/F8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/G8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_knight"/>
+                    <ImageView android:id="@+id/G8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/H8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_rook"/>
+                    <ImageView android:id="@+id/H8" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <!--Row 2-->
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/A7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                    <ImageView android:id="@+id/A7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/B7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                    <ImageView android:id="@+id/B7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/C7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                    <ImageView android:id="@+id/C7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/D7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                    <ImageView android:id="@+id/D7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
                     <ImageView android:id="@+id/E7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/F7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                    <ImageView android:id="@+id/F7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/G7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                    <ImageView android:id="@+id/G7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/H7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                    <ImageView android:id="@+id/H7" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <!--Row 3-->
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
@@ -125,7 +125,7 @@
                     <ImageView android:id="@+id/B6" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/C6" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_knight"/>
+                    <ImageView android:id="@+id/C6" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
                     <ImageView android:id="@+id/D6" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
@@ -150,13 +150,13 @@
                     <ImageView android:id="@+id/B5" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/C5" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp" android:background="@drawable/black_bishop"/>
+                    <ImageView android:id="@+id/C5" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
                     <ImageView android:id="@+id/D5" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/E5" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/black_pawn"/>
+                    <ImageView android:id="@+id/E5" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
                     <ImageView android:id="@+id/F5" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
@@ -172,16 +172,16 @@
                     <ImageView android:id="@+id/A4" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/B4" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                    <ImageView android:id="@+id/B4" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/C4" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp" android:background="@drawable/white_bishop"/>
+                    <ImageView android:id="@+id/C4" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
                     <ImageView android:id="@+id/D4" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/E4" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                    <ImageView android:id="@+id/E4" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
                     <ImageView android:id="@+id/F4" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
@@ -209,7 +209,7 @@
                     <ImageView android:id="@+id/E3" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/F3" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_knight"/>
+                    <ImageView android:id="@+id/F3" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
                     <ImageView android:id="@+id/G3" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
@@ -219,44 +219,44 @@
                 </LinearLayout>
                 <!--Row 7-->
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/A2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                    <ImageView android:id="@+id/A2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
                     <ImageView android:id="@+id/B2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/C2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                    <ImageView android:id="@+id/C2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/D2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                    <ImageView android:id="@+id/D2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
                     <ImageView android:id="@+id/E2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="1dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/F2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                    <ImageView android:id="@+id/F2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/G2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                    <ImageView android:id="@+id/G2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/H2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_pawn"/>
+                    <ImageView android:id="@+id/H2" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <!--Row 8-->
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/A1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_rook"/>
+                    <ImageView android:id="@+id/A1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/B1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_knight"/>
+                    <ImageView android:id="@+id/B1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/C1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_bishop"/>
+                    <ImageView android:id="@+id/C1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/D1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_queen"/>
+                    <ImageView android:id="@+id/D1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardDark">
-                    <ImageView android:id="@+id/E1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_king"/>
+                    <ImageView android:id="@+id/E1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
                     <ImageView android:id="@+id/F1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
@@ -265,7 +265,7 @@
                     <ImageView android:id="@+id/G1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
                 <LinearLayout android:layout_height="38dp" android:layout_width="38dp" android:background="@color/colorBoardLight">
-                    <ImageView android:id="@+id/H1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp" android:background="@drawable/white_rook"/>
+                    <ImageView android:id="@+id/H1" android:layout_height="match_parent" android:layout_width="match_parent" android:layout_margin="3dp"/>
                 </LinearLayout>
             </GridLayout>
         </LinearLayout>

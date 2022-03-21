@@ -69,11 +69,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Test loading the board from FEN
         try {
-            //LoadBoardFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
-            //LoadBoardFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
-            baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
-            //LoadBoardFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+            //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
+            baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
+            //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+            //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+            loadBoard(baseBoard);
         } catch (Exception e) {
+            Log.d(TAG, e.toString());
             e.printStackTrace();
         }
 
@@ -264,16 +266,16 @@ public class MainActivity extends AppCompatActivity {
 
     //Should be deprecated -tom
     // Return column letter from given column number, zero indexed
-    private char GetColLetter(int col) {
-        switch (col) {
-            case 0: return 'A';
-            case 1: return 'B';
-            case 2: return 'C';
-            case 3: return 'D';
-            case 4: return 'E';
-            case 5: return 'F';
-            case 6: return 'G';
-            default: return 'H';
-        }
-    }
+//    private char GetColLetter(int col) {
+//        switch (col) {
+//            case 0: return 'A';
+//            case 1: return 'B';
+//            case 2: return 'C';
+//            case 3: return 'D';
+//            case 4: return 'E';
+//            case 5: return 'F';
+//            case 6: return 'G';
+//            default: return 'H';
+//        }
+//    }
 }
