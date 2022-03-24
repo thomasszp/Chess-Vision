@@ -141,8 +141,8 @@ public class ChessBoard {
                 if (player == ChessPlayer.WHITE) return 'K';
                 else return 'k';
             case QUEEN:
-                if (player == ChessPlayer.WHITE) return 'Q';
-                else return 'q';
+                if (player == ChessPlayer.WHITE) return 'K';
+                else return 'k';
             case ROOK:
                 if (player == ChessPlayer.WHITE) return 'R';
                 else return 'r';

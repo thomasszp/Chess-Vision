@@ -1,18 +1,23 @@
 package com.example.chessvision2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -21,16 +26,27 @@ import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
+//    private static final String [][] boardSquares = {
+//            {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"},
+//            {"A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"},
+//            {"A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"},
+//            {"A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4"},
+//            {"A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5"},
+//            {"A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6"},
+//            {"A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"},
+//            {"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"}};
     private static final String [][] boardSquares = {
-            {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"},
-            {"A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"},
-            {"A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"},
-            {"A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4"},
-            {"A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5"},
-            {"A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6"},
+            {"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"},
             {"A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"},
-            {"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"}};
+            {"A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6"},
+            {"A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5"},
+            {"A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4"},
+            {"A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"},
+            {"A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"},
+            {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"}};
     private static final String TAG = "mainTag";
+    ChessBoard baseBoard;
+    GridLayout boardGrid;
     LinearLayout optionLayout;                  //LinearLayout housing all options
     View.OnClickListener optionListener;        //Listener for all options
     Spinner prevMovesDropdown;                  //Spinner for previously executed moves in descending order
@@ -44,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();   //Hide default toolbar
-        ChessBoard baseBoard = new ChessBoard();
+
+        baseBoard = new ChessBoard();
+
 
         // Load all XML controls into variables
         optionLayout = findViewById(R.id.optionLayout);
@@ -58,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
                 GetNewMoves();
             }
         };
+
+        //listener for each box in GridLayout board
+        boardGrid = (GridLayout)findViewById(R.id.boardGrid);
+        boardClickedEvent(boardGrid);
 
         // Load options manually until we have the DB
         optionLayout.removeAllViews();
@@ -78,8 +100,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, e.toString());
             e.printStackTrace();
         }
-
-        Log.d(TAG, baseBoard.toString());
     }
 
     //loads frontend board from board object currently in use
@@ -91,13 +111,16 @@ public class MainActivity extends AppCompatActivity {
         for (ChessPiece piece : board.getPieces()) {
             SetGridSpace(piece, piece.getRow(), piece.getCol());
         }
-
+        Log.d(TAG, baseBoard.toString());
     }
 
     //TODO: CLEAR FRONTEND OF ALL IMAGES
     //please write this adam
     private void clearBoard() {
-
+//        for(int i = 0; i < boardGrid.getChildCount(); i++) {
+//            LinearLayout square = (LinearLayout) boardGrid.getChildAt(i);
+//            square.setBackgroundResource(0);
+//        }
     }
 
     private void SetGridSpace(ChessPiece piece, int col, int row) {
@@ -113,6 +136,63 @@ public class MainActivity extends AppCompatActivity {
         ImageView pieceImage = findViewById(gridID);
         pieceImage.setBackgroundResource(getResources().getIdentifier((String) piece.findPieceName(), "drawable", getPackageName()));
     }
+
+    //checks for when the board is clicked and gets the index
+    private void boardClickedEvent(GridLayout board) {
+        //for each box on the grid
+        for(int i = 0; i < board.getChildCount(); i++) {
+            LinearLayout cardView = (LinearLayout) board.getChildAt(i);
+            final int clickIndex = i;
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Log.d(TAG, "Clicked: " + (clickIndex%8) + ", " + (7 - clickIndex/8) + " - " + boardSquares[clickIndex/8][clickIndex%8]);
+                    clickRecord(boardSquares[clickIndex%8][clickIndex/8], clickIndex);
+                }
+            });
+        }
+    }
+
+    //stores and highlights squares that have been clicked on
+    private Integer click1, click2;
+    private void clickRecord(String gridId, int index) {
+        if (click1 == null) {
+            click1 = index;
+            boardGrid.getChildAt(click1).setElevation(100);
+            return;
+        } else if (click2 == null) {
+            //if same square clicked twice, reset stored indexes
+            if (click1 == index) {
+                click1 = null;
+                boardGrid.getChildAt(index).setElevation(0);
+                return;
+            }
+            click2 = index;
+            boardGrid.getChildAt(click1).setElevation(0);
+
+        }
+        moveFromIndexes(click1, click2);
+        click1 = null;
+        click2 = null;
+    }
+
+    //moves piece in index1, to location of index2
+    private void moveFromIndexes(int index1, int index2) {
+        int row1 = (index1 % 8);
+        int col1 = (index1 / 8);
+        Log.d(TAG, "1: " + row1 + ", " + col1 + " - " + index1);
+        ChessPiece firstPiece =  baseBoard.pieceLocation(row1, col1);
+        if (firstPiece != null) {
+            int row2 = (index2 % 8);
+            int col2 = (index2 / 8);
+            Log.d(TAG, "2: " + row2 + ", " + col2 + " - " + index2);
+            baseBoard.movePiece(firstPiece, row2, col2);
+            loadBoard(baseBoard);
+            return;
+        }
+        Log.d(TAG, row1 + ", " + col1 + " is empty");
+    }
+
 
     // Add new previously made move signature (in PGN) to the prevMoves array
     private void AddPrevMove(String newMove) {
