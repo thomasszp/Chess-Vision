@@ -1,9 +1,6 @@
 package com.example.chessvision2;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,13 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-
 
 public class MainActivity extends AppCompatActivity {
 //    private static final String [][] boardSquares = {
@@ -63,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         baseBoard = new ChessBoard();
 
-
         // Load all XML controls into variables
         optionLayout = findViewById(R.id.optionLayout);
         prevMovesDropdown = findViewById(R.id.prevMoves);
@@ -91,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Test loading the board from FEN
         try {
-            //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
-            baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
+            baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
+            //baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
             //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
             //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
             loadBoard(baseBoard);
@@ -114,24 +107,15 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, baseBoard.toString());
     }
 
-    //TODO: CLEAR FRONTEND OF ALL IMAGES
-    //please write this adam
     private void clearBoard() {
-//        for(int i = 0; i < boardGrid.getChildCount(); i++) {
-//            LinearLayout square = (LinearLayout) boardGrid.getChildAt(i);
-//            square.setBackgroundResource(0);
-//        }
+        for(int i = 0; i < boardGrid.getChildCount(); i++) {
+            LinearLayout square = (LinearLayout) boardGrid.getChildAt(i);
+            ImageView image = (ImageView) square.getChildAt(0);
+            image.setBackgroundResource(0);
+        }
     }
 
     private void SetGridSpace(ChessPiece piece, int col, int row) {
-        //String tmp = String.valueOf(GetColLetter(col)) + row;
-//        int gridID = getResources().getIdentifier(String.valueOf(GetColLetter(col)) + row, "id", getPackageName());
-//        ImageView pieceImage = findViewById(gridID);
-//        if (piece == ' ') { //Add blank space to the grid spot
-//            pieceImage.setBackgroundResource(0);
-//        } else {            //Add piece to that grid spot
-//            pieceImage.setBackgroundResource(getResources().getIdentifier((String) findPieceName(piece), "drawable", getPackageName()));
-//        }
         int gridID = getResources().getIdentifier(boardSquares[row][col], "id", getPackageName());
         ImageView pieceImage = findViewById(gridID);
         pieceImage.setBackgroundResource(getResources().getIdentifier((String) piece.findPieceName(), "drawable", getPackageName()));
@@ -201,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Execute the selected move. This is called from an option's listener
+    // TODO: Make it update the backend that prints in logcat
     private void NextMove(LinearLayout option) {
         ImageView pieceImage = (ImageView) option.getChildAt(0);
         TextView currentSquareView = (TextView) option.getChildAt(1);
