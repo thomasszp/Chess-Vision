@@ -18,17 +18,10 @@ import android.widget.TextView;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import java.math.*;
+import java.sql.*;
 
 public class MainActivity extends AppCompatActivity {
-//    private static final String [][] boardSquares = {
-//            {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"},
-//            {"A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"},
-//            {"A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"},
-//            {"A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4"},
-//            {"A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5"},
-//            {"A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6"},
-//            {"A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"},
-//            {"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"}};
     private static final String [][] boardSquares = {
             {"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"},
             {"A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"},
@@ -66,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 NextMove((LinearLayout) v);
-                GetNewMoves();
             }
         };
 
@@ -74,18 +66,14 @@ public class MainActivity extends AppCompatActivity {
         boardGrid = (GridLayout)findViewById(R.id.boardGrid);
         boardClickedEvent(boardGrid);
 
-        // Load options manually until we have the DB
-        optionLayout.removeAllViews();
-        SetHardcodedOptions();
-
         // Load past move into array for dropdown
         AddPrevMove("Nc6");
         LoadPrevMoveSpinner();
 
         // Test loading the board from FEN
         try {
-            baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
-            //baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
+            //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
+            baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
             //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
             //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
             loadBoard(baseBoard);
@@ -105,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
             SetGridSpace(piece, piece.getRow(), piece.getCol());
         }
         Log.d(TAG, baseBoard.toString());
+
+        //get new recommended moves
+        loadDisplayedMoves();
     }
 
     private void clearBoard() {
@@ -177,6 +168,55 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, row1 + ", " + col1 + " is empty");
     }
 
+    //when called, updates data in recommended move fields
+    private void loadDisplayedMoves() {
+        //clear data
+        optionLayout.removeAllViews();
+
+        //query db for each move and respective data
+        String[][] moveData = queryMoveData();
+
+        //prob will need to write function to compare FEN values to get next move data
+        for (int i = 0; i < 3; i++) {
+            optionLayout.addView(NewOption("black_king", "--","--", moveData[i][0],moveData[i][0],moveData[i][0]));
+        }
+    }
+
+    //is called every time the board updates
+    //queries db for top 3 moves and returns them
+    private String[][] queryMoveData() {
+        String currentFEN = baseBoard.generateFEN();
+        String queryText = "SELECT TOP 3 ... FROM ... WHERE FEN = " + currentFEN;
+        String[][] queryData = {{"--", "--", "--", "--"}, {"--", "--", "--", "--"}, {"--", "--", "--", "--"}};
+
+        //create connection: https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
+        Connection con;
+        Statement stmt;
+        try {
+            con = null;
+            stmt = con.createStatement();
+        } catch (Exception e) {
+            Log.d("Connection-Failed", e.toString());
+            return queryData;
+        }
+
+        int moveIndex = 0;
+        try {
+            ResultSet rs = stmt.executeQuery(queryText);
+            while (rs.next()) {
+                //not sure what or how many fields needed yet
+                queryData[moveIndex][0] = rs.getString("FEN");
+                queryData[moveIndex][1] = rs.getString("");
+                int data = rs.getInt("");
+                int info = rs.getInt("");
+                moveIndex++;
+            }
+        } catch (SQLException e) {
+            Log.d("Query-Failed", e.toString());
+            return queryData;
+        }
+        return queryData;
+    }
 
     // Add new previously made move signature (in PGN) to the prevMoves array
     private void AddPrevMove(String newMove) {
@@ -185,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Execute the selected move. This is called from an option's listener
-    // TODO: Make it update the backend that prints in logcat
+    // TODO: Rewrite hardcoded buttons
     private void NextMove(LinearLayout option) {
         ImageView pieceImage = (ImageView) option.getChildAt(0);
         TextView currentSquareView = (TextView) option.getChildAt(1);
@@ -221,16 +261,6 @@ public class MainActivity extends AppCompatActivity {
         LoadPrevMoveSpinner();
     }
 
-    // Fetch a list of possible next moves from the DB
-    // (For now, it sets hardcoded options that assume you moved the bishop from the first set of hardcoded options)
-    // TODO: Add database functionality
-    private void GetNewMoves() {
-        optionLayout.removeAllViews();
-        optionLayout.addView(NewOption("white_pawn", "F2","E3",52,12,36));
-        optionLayout.addView(NewOption("white_pawn", "D2","E3",51,12,37));
-        optionLayout.addView(NewOption("white_knight", "B1","C3",42,21,37));
-    }
-
     // Link the array of previous moves to the Spinner
     private void LoadPrevMoveSpinner() {
         spinnerArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, prevMoves);
@@ -239,20 +269,13 @@ public class MainActivity extends AppCompatActivity {
         prevMovesDropdown.setSelection(prevMoves.length-1);
     }
 
-    // Generate a list of hardcoded options for use in demos
-    private void SetHardcodedOptions() {
-        optionLayout.addView(NewOption("black_bishop", "C5","E3",60,10,30));
-        optionLayout.addView(NewOption("black_queen", "D8","F6",47,5,48));
-        optionLayout.addView(NewOption("black_knight", "C6","B4",56,15,29));
-    }
-
     // Return dips for use in setting a control's layout parameters
     private int GetDips(float dips) {
         return (int)(dips * getResources().getDisplayMetrics().density);
     }
 
     // Add a new option to the list of moves
-    private LinearLayout NewOption(String pieceName, String currSquareText, String nextSquareText, int pctWinValue, int pctTieValue, int pctLossValue) {
+    private LinearLayout NewOption(String pieceName, String currSquareText, String nextSquareText, String pctWinValue, String pctTieValue, String pctLossValue) {
         // General stuff all options share
         LinearLayout option = new LinearLayout(this);
         LayoutParams optionLayoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, GetDips(80));
@@ -300,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
         pctWin.setGravity(Gravity.CENTER);
         pctWin.setTextColor(getResources().getColor(R.color.colorWin));
         pctWin.setTextSize(30);
-        pctWin.setText(String.format(Locale.US, "%d%%", pctWinValue));
+        pctWin.setText(String.format(Locale.US, "%s%%", pctWinValue));
 
         //   Tie percentage
         TextView pctTie = new TextView(this);
@@ -308,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
         pctTie.setGravity(Gravity.CENTER);
         pctTie.setTextColor(getResources().getColor(R.color.colorTie));
         pctTie.setTextSize(30);
-        pctTie.setText(String.format(Locale.US, "%d%%", pctTieValue));
+        pctTie.setText(String.format(Locale.US, "%s%%", pctTieValue));
 
         //   Loss percentage
         TextView pctLoss = new TextView(this);
@@ -316,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
         pctLoss.setGravity(Gravity.CENTER);
         pctLoss.setTextColor(getResources().getColor(R.color.colorLose));
         pctLoss.setTextSize(30);
-        pctLoss.setText(String.format(Locale.US, "%d%%", pctLossValue));
+        pctLoss.setText(String.format(Locale.US, "%s%%", pctLossValue));
 
         // Add everything to the new option and return it
         option.addView(pieceImage);
@@ -329,18 +352,4 @@ public class MainActivity extends AppCompatActivity {
         return option;
     }
 
-    //Should be deprecated -tom
-    // Return column letter from given column number, zero indexed
-//    private char GetColLetter(int col) {
-//        switch (col) {
-//            case 0: return 'A';
-//            case 1: return 'B';
-//            case 2: return 'C';
-//            case 3: return 'D';
-//            case 4: return 'E';
-//            case 5: return 'F';
-//            case 6: return 'G';
-//            default: return 'H';
-//        }
-//    }
 }

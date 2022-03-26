@@ -296,15 +296,14 @@
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:background="@drawable/black_bishop"
-                        android:tag="black_bishop"/>
+                        android:tag="image1"/>
                     <!--Current Square-->
                     <TextView
                         android:layout_width="38dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:textSize="30sp"
-                        android:text="C5"/>
+                        android:text=""/>
                     <!--Arrow-->
                     <ImageView
                         android:layout_width="wrap_content"
@@ -317,7 +316,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:textSize="30sp"
-                        android:text="E3"/>
+                        android:text=""/>
                     <!--Pct Win-->
                     <TextView
                         android:layout_width="73dp"
@@ -326,7 +325,7 @@
                         android:gravity="center"
                         android:textColor="@color/colorWin"
                         android:textSize="30sp"
-                        android:text="60%"/>
+                        android:text=""/>
                     <!--Pct Tie-->
                     <TextView
                         android:layout_width="73dp"
@@ -334,7 +333,7 @@
                         android:gravity="center"
                         android:textColor="@color/colorTie"
                         android:textSize="30sp"
-                        android:text="10%"/>
+                        android:text=""/>
                     <!--Pct Lose-->
                     <TextView
                         android:layout_width="73dp"
@@ -342,7 +341,7 @@
                         android:gravity="center"
                         android:textColor="@color/colorLose"
                         android:textSize="30sp"
-                        android:text="30%"/>
+                        android:text=""/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -358,15 +357,14 @@
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:background="@drawable/black_queen"
-                        android:tag="black_queen"/>
+                        android:tag="image2"/>
                     <!--Current Square-->
                     <TextView
                         android:layout_width="38dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:textSize="30sp"
-                        android:text="D8"/>
+                        android:text=""/>
                     <!--Arrow-->
                     <ImageView
                         android:layout_width="wrap_content"
@@ -380,7 +378,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:textSize="30sp"
-                        android:text="F6"/>
+                        android:text=""/>
                     <!--Pct Win-->
                     <TextView
                         android:layout_width="73dp"
@@ -389,7 +387,7 @@
                         android:layout_marginStart="5dp"
                         android:textColor="@color/colorWin"
                         android:textSize="30sp"
-                        android:text="47%"/>
+                        android:text=""/>
                     <!--Pct Tie-->
                     <TextView
                         android:layout_width="73dp"
@@ -397,7 +395,7 @@
                         android:gravity="center"
                         android:textColor="@color/colorTie"
                         android:textSize="30sp"
-                        android:text="5%"/>
+                        android:text=""/>
                     <!--Pct Lose-->
                     <TextView
                         android:layout_width="73dp"
@@ -405,7 +403,7 @@
                         android:gravity="center"
                         android:textColor="@color/colorLose"
                         android:textSize="30sp"
-                        android:text="48%"/>
+                        android:text=""/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -421,15 +419,14 @@
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:background="@drawable/black_knight"
-                        android:tag="black_knight"/>
+                        android:tag="image3"/>
                     <!--Current Square-->
                     <TextView
                         android:layout_width="38dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:textSize="30sp"
-                        android:text="C6"/>
+                        android:text=""/>
                     <!--Arrow-->
                     <ImageView
                         android:layout_width="wrap_content"
@@ -443,7 +440,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:textSize="30sp"
-                        android:text="B4"/>
+                        android:text=""/>
                     <!--Pct Win-->
                     <TextView
                         android:layout_width="73dp"
@@ -452,7 +449,7 @@
                         android:layout_marginStart="5dp"
                         android:textColor="@color/colorWin"
                         android:textSize="30sp"
-                        android:text="56%"/>
+                        android:text=""/>
                     <!--Pct Tie-->
                     <TextView
                         android:layout_width="73dp"
@@ -460,7 +457,7 @@
                         android:gravity="center"
                         android:textColor="@color/colorTie"
                         android:textSize="30sp"
-                        android:text="15%"/>
+                        android:text=""/>
                     <!--Pct Lose-->
                     <TextView
                         android:layout_width="73dp"
@@ -468,7 +465,7 @@
                         android:gravity="center"
                         android:textColor="@color/colorLose"
                         android:textSize="30sp"
-                        android:text="29%"/>
+                        android:text=""/>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

@@ -9,7 +9,6 @@ import java.util.List;
 
 public class ChessBoard {
     private List<ChessPiece> allPieces = new ArrayList<ChessPiece>();
-    private String FEN;
     private boolean whiteCastleQ = false;
     private boolean whiteCastleK = false;
     private boolean blackCastleQ = false;
@@ -26,7 +25,6 @@ public class ChessBoard {
     //resets board to default state
     public void wipeBoard() {
         allPieces.clear();
-        FEN = "";
         whiteCastleQ = false;
         whiteCastleK = false;
         blackCastleQ = false;
@@ -74,6 +72,11 @@ public class ChessBoard {
             blackCastleK = true;
         if (details[1].contains("q"))
             blackCastleQ = true;
+    }
+
+    //generates FEN from allPieces and class data
+    public String generateFEN() {
+        return "";
     }
 
     //changes coordinates for a piece
