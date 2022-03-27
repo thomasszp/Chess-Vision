@@ -1,6 +1,8 @@
 package com.example.chessvision2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,6 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -92,7 +97,12 @@ public class MainActivity extends AppCompatActivity {
         for (ChessPiece piece : board.getPieces()) {
             SetGridSpace(piece, piece.getRow(), piece.getCol());
         }
+        //debugging tools to show stuff
         Log.d(TAG, baseBoard.toString());
+        Log.d(TAG, calculateMinMoves(baseBoard.generateFEN()) + "");
+        Log.d(TAG, baseBoard.generateFEN());
+        Snackbar mySnackbar = Snackbar.make(optionLayout, baseBoard.generateFEN(), BaseTransientBottomBar.LENGTH_LONG);
+        mySnackbar.show();
 
         //get new recommended moves
         loadDisplayedMoves();
@@ -112,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         pieceImage.setBackgroundResource(getResources().getIdentifier((String) piece.findPieceName(), "drawable", getPackageName()));
     }
 
-    //checks for when the board is clicked and gets the index
+    //checks for when the board is clicked and gets the index of the box
     private void boardClickedEvent(GridLayout board) {
         //for each box on the grid
         for(int i = 0; i < board.getChildCount(); i++) {
@@ -121,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //Log.d(TAG, "Clicked: " + (clickIndex%8) + ", " + (7 - clickIndex/8) + " - " + boardSquares[clickIndex/8][clickIndex%8]);
                     clickRecord(boardSquares[clickIndex%8][clickIndex/8], clickIndex);
                 }
             });
@@ -352,4 +361,51 @@ public class MainActivity extends AppCompatActivity {
         return option;
     }
 
+    //given a FEN, roughly calculate the minimum number of moves required to get to a board state
+    //useful for lowering db query time
+    //holy shit this is ugly
+    public int calculateMinMoves(String FEN) {
+        int moveCount = 0;
+        //use only piece locations of fen
+        FEN = replaceFENNums(FEN);
+        String board = FEN.split(" ", 2)[0];
+        String[] rows = board.split("/");
+
+        String defaultFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        defaultFEN = replaceFENNums(defaultFEN);
+        String[] defaultRows = defaultFEN.split("/");
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < rows[i].length() && j < defaultRows[i].length(); j++) {
+                if (rows[i].charAt(j) != defaultRows[i].charAt(j))
+                    moveCount++;
+                Log.d("moveTest", moveCount / 8 + "");
+            }
+        }
+
+        return moveCount;
+    }
+
+    //fills in empty spaces in a FEN string
+    //used when comparing two FEN strings for differences
+    public String replaceFENNums(String FEN) {
+        String board = FEN.split(" ", 2)[0];
+        String[] rows = board.split("/");
+        String newFEN = "";
+
+        for (int i = 0; i < 8; i++) {
+            String toFill = "";
+            for (int j = 0; j < rows[i].length(); j++) {
+                if (Character.isDigit(rows[i].charAt(j))) {
+                    for (int len = 0; len < rows[i].charAt(j); len++)
+                        toFill += "-";
+                    rows[i].replace(String.valueOf(rows[i].charAt(j)) ,toFill);
+                }
+                newFEN += rows[i];
+            }
+            if (i != 7)
+                newFEN += "/";
+        }
+        return newFEN;
+    }
 }

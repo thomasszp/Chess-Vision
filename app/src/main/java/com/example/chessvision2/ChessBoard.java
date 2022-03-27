@@ -75,8 +75,35 @@ public class ChessBoard {
     }
 
     //generates FEN from allPieces and class data
+    //its messy and could be refactored... but it works!
     public String generateFEN() {
-        return "";
+        ChessPiece piece;
+        String newFEN = "";
+        int empty;
+        for (int col = 0; col < 8; col++) {
+            empty = 0;
+            for (int row = 0; row < 8; row++) {
+                piece = pieceLocation(row, col);
+                if (piece == null)
+                    empty++;
+                else {
+                    if (empty != 0) {
+                        newFEN += empty;
+                        empty = 0;
+                    }
+                    newFEN += pieceString(piece.getPlayer(), piece.getType());
+                }
+                if (row == 7)
+                    if (empty != 0) {
+                        newFEN += empty;
+                        empty = 0;
+                    }
+            }
+            if (col != 7)
+                newFEN += "/";
+        }
+        //append additional data here
+        return newFEN;
     }
 
     //changes coordinates for a piece
@@ -144,8 +171,8 @@ public class ChessBoard {
                 if (player == ChessPlayer.WHITE) return 'K';
                 else return 'k';
             case QUEEN:
-                if (player == ChessPlayer.WHITE) return 'K';
-                else return 'k';
+                if (player == ChessPlayer.WHITE) return 'Q';
+                else return 'q';
             case ROOK:
                 if (player == ChessPlayer.WHITE) return 'R';
                 else return 'r';
