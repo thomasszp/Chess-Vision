@@ -363,49 +363,38 @@ public class MainActivity extends AppCompatActivity {
 
     //given a FEN, roughly calculate the minimum number of moves required to get to a board state
     //useful for lowering db query time
-    //holy shit this is ugly
+    //ugly but it works... FINALLY!
     public int calculateMinMoves(String FEN) {
         int moveCount = 0;
-        //use only piece locations of fen
-        FEN = replaceFENNums(FEN);
+        //new board and base board converted into arrays or pieces for 'easy' compare
         String board = FEN.split(" ", 2)[0];
         String[] rows = board.split("/");
+        String croppedFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        String[] defaultRows = croppedFEN.split("/");
 
-        String defaultFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        defaultFEN = replaceFENNums(defaultFEN);
-        String[] defaultRows = defaultFEN.split("/");
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < rows[i].length() && j < defaultRows[i].length(); j++) {
-                if (rows[i].charAt(j) != defaultRows[i].charAt(j))
-                    moveCount++;
-                Log.d("moveTest", moveCount / 8 + "");
-            }
-        }
-
-        return moveCount;
-    }
-
-    //fills in empty spaces in a FEN string
-    //used when comparing two FEN strings for differences
-    public String replaceFENNums(String FEN) {
-        String board = FEN.split(" ", 2)[0];
-        String[] rows = board.split("/");
-        String newFEN = "";
-
+        //loops through each row
         for (int i = 0; i < 8; i++) {
             String toFill = "";
-            for (int j = 0; j < rows[i].length(); j++) {
-                if (Character.isDigit(rows[i].charAt(j))) {
-                    for (int len = 0; len < rows[i].charAt(j); len++)
-                        toFill += "-";
-                    rows[i].replace(String.valueOf(rows[i].charAt(j)) ,toFill);
+            //only checks starting rows
+            if (i == 0 || i == 1 || i == 6 || i == 7) {
+                //fills in empty space with '-'
+                for (int j = 0; j < rows[i].length(); j++) {
+                    toFill = "";
+                    if (Character.isDigit(rows[i].charAt(j))) {
+                        for (int len = 0; len < Integer.parseInt(String.valueOf(rows[i].charAt(j))); len++) {
+                            toFill += "-";
+                        }
+                        rows[i] = rows[i].substring(0, j) + toFill + rows[i].substring(j+1);
+                    }
                 }
-                newFEN += rows[i];
+                //compares backline columns, and looks for differences
+                for (int j = 0; j < 8; j++) {
+                    if (rows[i].charAt(j) != defaultRows[i].charAt(j))
+                        moveCount++;
+                    Log.d("moveTest", moveCount + "");
+                }
             }
-            if (i != 7)
-                newFEN += "/";
         }
-        return newFEN;
+        return moveCount;
     }
 }
