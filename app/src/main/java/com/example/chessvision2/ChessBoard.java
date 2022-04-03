@@ -121,6 +121,15 @@ public class ChessBoard {
         playerTurn = !playerTurn;
     }
 
+    //Delete piece at location
+    public void deletePiece(int coordx, int coordy) {
+        //check location to see if piece exists to be deleted
+        ChessPiece testPiece = pieceLocation(coordx, coordy);
+        if (testPiece != null) {
+            allPieces.remove(testPiece);
+        }
+    }
+
     //returns piece at location if exists
     public ChessPiece pieceLocation(int row, int col) {
         for (ChessPiece piece : allPieces) {

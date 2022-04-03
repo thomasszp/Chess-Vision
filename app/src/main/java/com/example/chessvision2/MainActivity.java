@@ -36,11 +36,20 @@ public class MainActivity extends AppCompatActivity {
             {"A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"},
             {"A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"},
             {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"}};
+    private static final String[] moveColNames = {
+            "MOVE1", "MOVE2", "MOVE3", "MOVE4", "MOVE5", "MOVE6", "MOVE7", "MOVE8",
+            "MOVE9", "MOVE10", "MOVE11", "MOVE12", "MOVE13", "MOVE14", "MOVE15", "MOVE16",
+            "MOVE17", "MOVE18", "MOVE19", "MOVE20", "MOVE21", "MOVE22", "MOVE23", "MOVE24",
+            "MOVE25", "MOVE26", "MOVE27", "MOVE28", "MOVE29", "MOVE30", "MOVE31", "MOVE32",
+            "MOVE33", "MOVE34", "MOVE35", "MOVE36", "MOVE37", "MOVE38", "MOVE39", "MOVE40"
+    };
     private static final String TAG = "mainTag";
     ChessBoard baseBoard;
     GridLayout boardGrid;
+    LinearLayout boardBackground;               //LinearLayout delete space for pieces
     LinearLayout optionLayout;                  //LinearLayout housing all options
     View.OnClickListener optionListener;        //Listener for all options
+    View.OnClickListener backgroundListener;    //Listener for delete space for pieces
     Spinner prevMovesDropdown;                  //Spinner for previously executed moves in descending order
     String[] prevMoves = {};                    //Array of all past moves, adapted into spinner dynamically
     ArrayAdapter<String> spinnerArrayAdapter;   //Spinner adapter
@@ -58,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         // Load all XML controls into variables
         optionLayout = findViewById(R.id.optionLayout);
         prevMovesDropdown = findViewById(R.id.prevMoves);
-
         // Control listeners
         optionListener = new View.OnClickListener() {
             @Override
@@ -66,6 +74,15 @@ public class MainActivity extends AppCompatActivity {
                 NextMove((LinearLayout) v);
             }
         };
+
+        //listener for clicking outside board
+        boardBackground = (LinearLayout) findViewById(R.id.boardBackground);
+        boardBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletePieceClick();
+            }
+        });
 
         //listener for each box in GridLayout board
         boardGrid = (GridLayout)findViewById(R.id.boardGrid);
@@ -78,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
         // Test loading the board from FEN
         try {
             //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
-            baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
-            //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+            //baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
+            baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
             //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
             loadBoard(baseBoard);
         } catch (Exception e) {
@@ -99,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
         }
         //debugging tools to show stuff
         Log.d(TAG, baseBoard.toString());
-        Log.d(TAG, calculateMinMoves(baseBoard.generateFEN()) + "");
         Log.d(TAG, baseBoard.generateFEN());
         Snackbar mySnackbar = Snackbar.make(optionLayout, baseBoard.generateFEN(), BaseTransientBottomBar.LENGTH_LONG);
         mySnackbar.show();
@@ -160,11 +176,26 @@ public class MainActivity extends AppCompatActivity {
         click2 = null;
     }
 
+    //Lets user delete piece by clicking off the board
+    //Checks if piece is selected, then deletes if so
+    private void deletePieceClick() {
+        Log.d(TAG, "trying to delete");
+        //if no piece selected
+        if (click1 == null)
+            return;
+        int row1 = (click1 % 8);
+        int col1 = (click1 / 8);
+        //wipe data about piece being deleted
+        baseBoard.deletePiece(row1, col1);
+        boardGrid.getChildAt(click1).setElevation(0);
+        click1 = null;
+        loadBoard(baseBoard);
+    }
+
     //moves piece in index1, to location of index2
     private void moveFromIndexes(int index1, int index2) {
         int row1 = (index1 % 8);
         int col1 = (index1 / 8);
-        Log.d(TAG, "1: " + row1 + ", " + col1 + " - " + index1);
         ChessPiece firstPiece =  baseBoard.pieceLocation(row1, col1);
         if (firstPiece != null) {
             int row2 = (index2 % 8);
@@ -174,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
             loadBoard(baseBoard);
             return;
         }
-        Log.d(TAG, row1 + ", " + col1 + " is empty");
     }
 
     //when called, updates data in recommended move fields
@@ -194,8 +224,9 @@ public class MainActivity extends AppCompatActivity {
     //is called every time the board updates
     //queries db for top 3 moves and returns them
     private String[][] queryMoveData() {
+        String moveSelects = generateQueryMoves();
         String currentFEN = baseBoard.generateFEN();
-        String queryText = "SELECT TOP 3 ... FROM ... WHERE FEN = " + currentFEN;
+        String queryText = "SELECT " + moveSelects + ", .., .." + " ... FROM ... WHERE FEN = " + currentFEN;
         String[][] queryData = {{"--", "--", "--", "--"}, {"--", "--", "--", "--"}, {"--", "--", "--", "--"}};
 
         //create connection: https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
@@ -214,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
             ResultSet rs = stmt.executeQuery(queryText);
             while (rs.next()) {
                 //not sure what or how many fields needed yet
+                //going to need another function to calculate win-rate and stuff
                 queryData[moveIndex][0] = rs.getString("FEN");
                 queryData[moveIndex][1] = rs.getString("");
                 int data = rs.getInt("");
@@ -225,6 +257,19 @@ public class MainActivity extends AppCompatActivity {
             return queryData;
         }
         return queryData;
+    }
+
+    //Returns string of all moves cols that need to be searched in db query
+    private String generateQueryMoves() {
+        String fullText = "";
+        int minMoves = calculateMinMoves(baseBoard.generateFEN()) - 1;
+        for (int i = minMoves; i < 40; i++) {
+            fullText += moveColNames[i];
+            if (i != 39)
+                fullText += ", ";
+        }
+
+        return fullText;
     }
 
     // Add new previously made move signature (in PGN) to the prevMoves array
@@ -369,8 +414,8 @@ public class MainActivity extends AppCompatActivity {
         //new board and base board converted into arrays or pieces for 'easy' compare
         String board = FEN.split(" ", 2)[0];
         String[] rows = board.split("/");
-        String croppedFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        String[] defaultRows = croppedFEN.split("/");
+        String defaultFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        String[] defaultRows = defaultFEN.split("/");
 
         //loops through each row
         for (int i = 0; i < 8; i++) {
@@ -391,7 +436,6 @@ public class MainActivity extends AppCompatActivity {
                 for (int j = 0; j < 8; j++) {
                     if (rows[i].charAt(j) != defaultRows[i].charAt(j))
                         moveCount++;
-                    Log.d("moveTest", moveCount + "");
                 }
             }
         }
