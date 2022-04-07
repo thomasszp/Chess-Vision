@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
             {"A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"},
             {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"}};
     private static final String[] moveColNames = {
-            "MOVE1", "MOVE2", "MOVE3", "MOVE4", "MOVE5", "MOVE6", "MOVE7", "MOVE8",
+            "MOVE0", "MOVE1", "MOVE2", "MOVE3", "MOVE4", "MOVE5", "MOVE6", "MOVE7", "MOVE8",
             "MOVE9", "MOVE10", "MOVE11", "MOVE12", "MOVE13", "MOVE14", "MOVE15", "MOVE16",
             "MOVE17", "MOVE18", "MOVE19", "MOVE20", "MOVE21", "MOVE22", "MOVE23", "MOVE24",
             "MOVE25", "MOVE26", "MOVE27", "MOVE28", "MOVE29", "MOVE30", "MOVE31", "MOVE32",
@@ -74,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
                 NextMove((LinearLayout) v);
             }
         };
-
         //listener for clicking outside board
         boardBackground = (LinearLayout) findViewById(R.id.boardBackground);
         boardBackground.setOnClickListener(new View.OnClickListener() {
@@ -179,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
     //Lets user delete piece by clicking off the board
     //Checks if piece is selected, then deletes if so
     private void deletePieceClick() {
-        Log.d(TAG, "trying to delete");
         //if no piece selected
         if (click1 == null)
             return;
@@ -200,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
         if (firstPiece != null) {
             int row2 = (index2 % 8);
             int col2 = (index2 / 8);
-            Log.d(TAG, "2: " + row2 + ", " + col2 + " - " + index2);
             baseBoard.movePiece(firstPiece, row2, col2);
             loadBoard(baseBoard);
             return;
@@ -213,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
         optionLayout.removeAllViews();
 
         //query db for each move and respective data
-        String[][] moveData = queryMoveData();
+        String[][] moveData = queryFutureMoves();
 
         //prob will need to write function to compare FEN values to get next move data
         for (int i = 0; i < 3; i++) {
@@ -221,19 +219,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //
+    private Connection getConnection() {
+        //create connection: https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
+        Connection conn = null;
+//        Properties connectionProps = new Properties();
+//        connectionProps.put("user", this.userName);
+//        connectionProps.put("password", this.password);
+//        conn = DriverManager.getConnection(
+//                "jdbc:" + this.dbms + "://" +
+//                        this.serverName +
+//                        ":" + this.portNumber + "/",
+//                connectionProps);
+        return conn;
+    }
+
+
+
     //is called every time the board updates
-    //queries db for top 3 moves and returns them
-    private String[][] queryMoveData() {
+    //gets every next move from current FEN
+    private String[][] queryFutureMoves() {
         String moveSelects = generateQueryMoves();
         String currentFEN = baseBoard.generateFEN();
         String queryText = "SELECT " + moveSelects + ", .., .." + " ... FROM ... WHERE FEN = " + currentFEN;
         String[][] queryData = {{"--", "--", "--", "--"}, {"--", "--", "--", "--"}, {"--", "--", "--", "--"}};
 
-        //create connection: https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
-        Connection con;
+        Connection con = getConnection();
         Statement stmt;
         try {
-            con = null;
             stmt = con.createStatement();
         } catch (Exception e) {
             Log.d("Connection-Failed", e.toString());
@@ -259,17 +272,55 @@ public class MainActivity extends AppCompatActivity {
         return queryData;
     }
 
+    //Called to find winrate about fen returned from queryFutureMoves
+    //queries  and popularity of FEN values
+    private String[] queryFENData(String FEN) {
+        String currentFEN = baseBoard.generateFEN();
+        String queryText = "SELECT winrates, etc ... FROM ... WHERE FEN = " + FEN;
+        String[] queryData = {"", "", "", ""};
+
+        Connection con = getConnection();
+        Statement stmt;
+        try {
+            stmt = con.createStatement();
+        } catch (Exception e) {
+            Log.d("Connection-Failed", e.toString());
+            return queryData;
+        }
+
+        try {
+            ResultSet rs = stmt.executeQuery(queryText);
+            while (rs.next()) {
+                //not sure what or how many fields needed yet
+                //going to need another function to calculate win-rate and stuff
+                queryData[0] = rs.getString("blackwinpercentage");
+                queryData[1] = rs.getString("whitewinpercentage");
+                int data = rs.getInt("totalgames");
+                int info = rs.getInt("idk");
+            }
+        } catch (SQLException e) {
+            Log.d("Query-Failed", e.toString());
+            return queryData;
+        }
+        return queryData;
+    }
+
     //Returns string of all moves cols that need to be searched in db query
     private String generateQueryMoves() {
         String fullText = "";
-        int minMoves = calculateMinMoves(baseBoard.generateFEN()) - 1;
-        for (int i = minMoves; i < 40; i++) {
+        int minMoves = calculateMinMoves(baseBoard.generateFEN());
+        for (int i = minMoves; i < 41; i++) {
             fullText += moveColNames[i];
             if (i != 39)
                 fullText += ", ";
         }
 
         return fullText;
+    }
+
+    public void boardRefresh(View v) {
+        baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+        loadBoard(baseBoard);
     }
 
     // Add new previously made move signature (in PGN) to the prevMoves array
