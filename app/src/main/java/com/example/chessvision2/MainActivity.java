@@ -26,8 +26,11 @@ import java.util.Locale;
 import java.util.Objects;
 import java.math.*;
 import java.sql.*;
+import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity {
+    private Connection DBH; // DataBase Host: JDBC connection to our MySQL server
+
     private static final String [][] boardSquares = {
             {"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"},
             {"A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"},
@@ -62,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();   //Hide default toolbar
+
+        try {
+            DBH = getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         baseBoard = new ChessBoard();
 
@@ -106,6 +115,21 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, e.toString());
             e.printStackTrace();
         }
+    }
+
+    // Connect to our MySQL server through JDBC
+    private Connection getConnection() throws SQLException {
+        //create connection: https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
+        Connection conn = null;
+        Properties connectionProps = new Properties();
+        connectionProps.put("user", "chessmaster");
+        connectionProps.put("password", "chess");
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://63.183.152.216:3306/", connectionProps);
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return conn;
     }
 
     //loads frontend board from board object currently in use
@@ -218,26 +242,9 @@ public class MainActivity extends AppCompatActivity {
 
         //prob will need to write function to compare FEN values to get next move data
         for (int i = 0; i < 3; i++) {
-            optionLayout.addView(NewOption("black_king", "--","--", moveData[i][0],moveData[i][0],moveData[i][0]));
+            optionLayout.addView(NewOption("black_king", "--", "--", moveData[i][0], moveData[i][0], moveData[i][0]));
         }
     }
-
-    //
-    private Connection getConnection() {
-        //create connection: https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
-        Connection conn = null;
-//        Properties connectionProps = new Properties();
-//        connectionProps.put("user", this.userName);
-//        connectionProps.put("password", this.password);
-//        conn = DriverManager.getConnection(
-//                "jdbc:" + this.dbms + "://" +
-//                        this.serverName +
-//                        ":" + this.portNumber + "/",
-//                connectionProps);
-        return conn;
-    }
-
-
 
     //is called every time the board updates
     //gets every next move from current FEN
@@ -247,10 +254,9 @@ public class MainActivity extends AppCompatActivity {
         String queryText = "SELECT " + moveSelects + ", .., .." + " ... FROM ... WHERE FEN = " + currentFEN;
         String[][] queryData = {{"--", "--", "--", "--"}, {"--", "--", "--", "--"}, {"--", "--", "--", "--"}};
 
-        Connection con = getConnection();
         Statement stmt;
         try {
-            stmt = con.createStatement();
+            stmt = DBH.createStatement();
         } catch (Exception e) {
             Log.d("Connection-Failed", e.toString());
             return queryData;
@@ -282,10 +288,9 @@ public class MainActivity extends AppCompatActivity {
         String queryText = "SELECT winrates, etc ... FROM ... WHERE FEN = " + FEN;
         String[] queryData = {"", "", "", ""};
 
-        Connection con = getConnection();
         Statement stmt;
         try {
-            stmt = con.createStatement();
+            stmt = DBH.createStatement();
         } catch (Exception e) {
             Log.d("Connection-Failed", e.toString());
             return queryData;
