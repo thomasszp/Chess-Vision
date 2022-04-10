@@ -106,6 +106,45 @@ public class ChessBoard {
         return newFEN;
     }
 
+    //compares two FEN values, and finds the last moved piece
+    //returns name of drawable piece
+    public String pieceChanged(String otherFEN) {
+        //get each piece row of fen values
+        String[] originalRows = generateFEN().split(" ", 2)[0].split("/");
+        String[] otherRows = otherFEN.split(" ", 2)[0].split("/");
+        originalRows = fillFEN(originalRows);
+        otherRows = fillFEN(otherRows);
+
+        //loop through each row
+        for (int i = 0; i < 8; i++) {
+            //loop through each col
+            for (int j = 0; j < 8; j++) {
+                if (otherRows[i].charAt(j) != originalRows[i].charAt(j) && otherRows[i].charAt(j) != '-')
+                    return new ChessPiece(0, 0, getPlayer(otherRows[i].charAt(j)), getType(otherRows[i].charAt(j))).findPieceName();
+            }
+        }
+        //default image in case something goes wrong
+        return "white_pawn";
+    }
+
+    //pass in array of fen rows
+    //return fen with empty number tiles filled in by '-'
+    public String[] fillFEN(String[] FEN) {
+        for (int i = 0; i < 8; i++) {
+            String toFill = "";
+            for (int j = 0; j < FEN[i].length(); j++) {
+                toFill = "";
+                if (Character.isDigit(FEN[i].charAt(j))) {
+                    for (int len = 0; len < Integer.parseInt(String.valueOf(FEN[i].charAt(j))); len++) {
+                        toFill += "-";
+                    }
+                    FEN[i] = FEN[i].substring(0, j) + toFill + FEN[i].substring(j + 1);
+                }
+            }
+        }
+        return FEN;
+    }
+
     //changes coordinates for a piece
     //if moving onto a space already occupied, obliterate the piece currently there
     //no need for move validation

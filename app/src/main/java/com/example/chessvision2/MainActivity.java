@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         AddPrevMove("Nc6");
         LoadPrevMoveSpinner();
 
+
+
         // Test loading the board from FEN
         try {
             //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
             //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
             loadBoard(baseBoard);
+            Log.d(TAG, baseBoard.pieceChanged("rnbqkb1r/pppppppp/5n2/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1"));
         } catch (Exception e) {
             Log.d(TAG, e.toString());
             e.printStackTrace();
@@ -468,21 +471,13 @@ public class MainActivity extends AppCompatActivity {
         String defaultFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         String[] defaultRows = defaultFEN.split("/");
 
+        //fill numbers with '-' to make comparing easier
+        rows = baseBoard.fillFEN(rows);
+
         //loops through each row
         for (int i = 0; i < 8; i++) {
-            String toFill = "";
             //only checks starting rows
             if (i == 0 || i == 1 || i == 6 || i == 7) {
-                //fills in empty space with '-'
-                for (int j = 0; j < rows[i].length(); j++) {
-                    toFill = "";
-                    if (Character.isDigit(rows[i].charAt(j))) {
-                        for (int len = 0; len < Integer.parseInt(String.valueOf(rows[i].charAt(j))); len++) {
-                            toFill += "-";
-                        }
-                        rows[i] = rows[i].substring(0, j) + toFill + rows[i].substring(j+1);
-                    }
-                }
                 //compares backline columns, and looks for differences
                 for (int j = 0; j < 8; j++) {
                     if (rows[i].charAt(j) != defaultRows[i].charAt(j))
