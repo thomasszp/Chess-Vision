@@ -1,4 +1,9 @@
-apply plugin: 'com.android.application'
+//apply plugin: 'com.android.application'
+
+plugins {
+    id 'com.android.application'
+    id 'com.chaquo.python'
+}
 
 android {
     compileSdkVersion 32
@@ -11,6 +16,23 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+        python {
+            pip {
+                install "mysql-connector-python"
+            }
+            //YOUR LOCAL FILEPATH HERE
+            buildPython "C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python37_64/python.exe"
+        }
+        sourceSets {
+            main {
+                python.srcDir "src/main/python"
+            }
+        }
+
     }
 
     buildTypes {
@@ -22,7 +44,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //implementation 'mysql:mysql-connector-java-8.0.28.jar'
+    //implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     //implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'

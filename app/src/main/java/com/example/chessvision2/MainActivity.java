@@ -18,6 +18,9 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -26,6 +29,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.math.*;
 import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity {
@@ -68,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             DBH = getConnection();
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            Log.d(TAG, "Error: " + e.toString());
             throw new RuntimeException(e);
         }
 
@@ -118,15 +125,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Connect to our MySQL server through JDBC
-    private Connection getConnection() throws SQLException {
+    private Connection getConnection() throws Exception {
         //create connection: https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
         Connection conn = null;
         Properties connectionProps = new Properties();
-        connectionProps.put("user", "chessmaster");
-        connectionProps.put("password", "chess");
+        connectionProps.put("user", "test");
+        connectionProps.put("password", "testt");
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://63.183.152.216:3306/", connectionProps);
-        } catch (SQLException e){
+
+            //String connectionString = "jdbc:mysql://chess.cizcr7arqko1.us-east-2.rds.amazonaws.com:3306/chess?user=admin&password=chessmaster";
+            //conn = DriverManager.getConnection(connectionString);
+            //conn = DriverManager.getConnection("jdbc:mysql://samplelink/database","root","password");
+            if (! Python.isStarted()) {
+                Python.start(new AndroidPlatform(this));
+            }
+            //create instance
+            Python py = Python.getInstance();
+            //create object
+            PyObject pyObj = py.getModule("pythonQueries");
+            //call function
+            PyObject obj = pyObj.callAttr("main");
+            //get returned String
+            Log.d("TAG", obj.toString());
+
+        }
+        catch (Exception e){
+            Log.d(TAG, e.toString());
             throw new RuntimeException(e);
         }
         return conn;
