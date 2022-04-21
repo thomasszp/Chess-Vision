@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
             {"A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"},
             {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"}};
     private static final String[] moveColNames = {
-            "MOVE0", "MOVE1", "MOVE2", "MOVE3", "MOVE4", "MOVE5", "MOVE6", "MOVE7", "MOVE8",
+            "MOVE1", "MOVE2", "MOVE3", "MOVE4", "MOVE5", "MOVE6", "MOVE7", "MOVE8",
             "MOVE9", "MOVE10", "MOVE11", "MOVE12", "MOVE13", "MOVE14", "MOVE15", "MOVE16",
             "MOVE17", "MOVE18", "MOVE19", "MOVE20", "MOVE21", "MOVE22", "MOVE23", "MOVE24",
             "MOVE25", "MOVE26", "MOVE27", "MOVE28", "MOVE29", "MOVE30", "MOVE31", "MOVE32",
-            "MOVE33", "MOVE34", "MOVE35", "MOVE36", "MOVE37", "MOVE38", "MOVE39", "MOVE40"
+            "MOVE33", "MOVE34", "MOVE35", "MOVE36", "MOVE37", "MOVE38"
     };
     private static final String TAG = "mainTag";
     ChessBoard baseBoard;
@@ -71,13 +71,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();   //Hide default toolbar
-
-        try {
-            DBH = getConnection();
-        } catch (Exception e) {
-            Log.d(TAG, "Error: " + e.toString());
-            throw new RuntimeException(e);
-        }
 
         baseBoard = new ChessBoard();
 
@@ -125,17 +118,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Connect to our MySQL server through JDBC
-    private Connection getConnection() throws Exception {
-        //create connection: https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
-        Connection conn = null;
-        Properties connectionProps = new Properties();
-        connectionProps.put("user", "test");
-        connectionProps.put("password", "testt");
+    private void getConnection() throws Exception {
         try {
-
-            //String connectionString = "jdbc:mysql://chess.cizcr7arqko1.us-east-2.rds.amazonaws.com:3306/chess?user=admin&password=chessmaster";
-            //conn = DriverManager.getConnection(connectionString);
-            //conn = DriverManager.getConnection("jdbc:mysql://samplelink/database","root","password");
             if (! Python.isStarted()) {
                 Python.start(new AndroidPlatform(this));
             }
@@ -153,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, e.toString());
             throw new RuntimeException(e);
         }
-        return conn;
     }
 
     //loads frontend board from board object currently in use
@@ -275,6 +258,21 @@ public class MainActivity extends AppCompatActivity {
     private String[][] queryFutureMoves() {
         String moveSelects = generateQueryMoves();
         String currentFEN = baseBoard.generateFEN();
+
+        try {
+            if (! Python.isStarted()) {
+                Python.start(new AndroidPlatform(this));
+            }
+            Python py = Python.getInstance();                                           //create instance
+            PyObject pyObj = py.getModule("pythonQueries");                             //create object
+            PyObject obj = pyObj.callAttr("getNewOptions", currentFEN, moveSelects);    //call function
+            Log.d("TAG", obj.toString());                                               //get returned String
+        }
+        catch (Exception e){
+            Log.d(TAG, e.toString());
+            throw new RuntimeException(e);
+        }
+
         String queryText = "SELECT " + moveSelects + ", .., .." + " ... FROM ... WHERE FEN = " + currentFEN;
         String[][] queryData = {{"--", "--", "--", "--"}, {"--", "--", "--", "--"}, {"--", "--", "--", "--"}};
 
@@ -340,11 +338,12 @@ public class MainActivity extends AppCompatActivity {
     //Returns string of all moves cols that need to be searched in db query
     private String generateQueryMoves() {
         String fullText = "";
-        int minMoves = calculateMinMoves(baseBoard.generateFEN());
-        for (int i = minMoves; i < 41; i++) {
-            fullText += moveColNames[i];
-            if (i != 39)
-                fullText += ", ";
+        String fen = baseBoard.generateFEN();
+        int minMoves = calculateMinMoves(fen);
+        for (int i = minMoves; i < 38; i++) {
+            fullText += moveColNames[i] + " LIKE '" + fen + "%'";
+            if (i != 37)
+                fullText += " OR ";
         }
 
         return fullText;
@@ -514,6 +513,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        return moveCount;
+        return moveCount - 1;
     }
 }
