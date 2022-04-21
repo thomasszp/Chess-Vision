@@ -107,8 +107,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
             //baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
-            baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
             //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+            //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+            baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1");
             loadBoard(baseBoard);
             Log.d(TAG, baseBoard.pieceChanged("rnbqkb1r/pppppppp/5n2/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1"));
         } catch (Exception e) {
@@ -155,7 +156,9 @@ public class MainActivity extends AppCompatActivity {
         mySnackbar.show();
 
         //get new recommended moves
-        loadDisplayedMoves();
+        if (calculateMinMoves(baseBoard.generateFEN()) > 0) {
+            loadDisplayedMoves();
+        }
     }
 
     private void clearBoard() {
@@ -266,7 +269,13 @@ public class MainActivity extends AppCompatActivity {
             Python py = Python.getInstance();                                           //create instance
             PyObject pyObj = py.getModule("pythonQueries");                             //create object
             PyObject obj = pyObj.callAttr("getNewOptions", currentFEN, moveSelects);    //call function
-            Log.d("TAG", obj.toString());                                               //get returned String
+            //Log.d("TAG", obj.toString());                                               //get returned String
+            for (PyObject o : obj.asList()) {
+                Log.d("TAG", o.toString());
+                Log.d("TAG", "Size: " + o.size());
+                Log.d("TAG", "ID: " + o);
+            }
+
         }
         catch (Exception e){
             Log.d(TAG, e.toString());
@@ -340,12 +349,11 @@ public class MainActivity extends AppCompatActivity {
         String fullText = "";
         String fen = baseBoard.generateFEN();
         int minMoves = calculateMinMoves(fen);
-        for (int i = minMoves; i < 38; i++) {
+        for (int i = minMoves - 1; i < 38; i++) {
             fullText += moveColNames[i] + " LIKE '" + fen + "%'";
             if (i != 37)
                 fullText += " OR ";
         }
-
         return fullText;
     }
 
@@ -513,6 +521,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        return moveCount - 1;
+        return moveCount;
     }
 }
