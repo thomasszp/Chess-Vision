@@ -1,5 +1,7 @@
 package com.example.chessvision2;
 
+import androidx.appcompat.widget.SwitchCompat;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,12 +56,18 @@ public class ChessBoard {
             colIndex++;
         }
 
-        //hopefully we only need to deal with 2, maybe 3 of these details
-        if (details[0] == "w")
-            setWhiteTurn(true);
-        else
-            setWhiteTurn(false);
+        //SwitchCompat turnSwitch;
 
+
+        //Sets player turn by flipping switch and storing variable
+        if (details[0].equals("w")) {
+            MainActivity.turnSwitch.setChecked(true);   //setChecked does not fire off the listener for some reason
+            isWhiteTurn = true;
+        } else {
+            MainActivity.turnSwitch.setChecked(false);  //setChecked does not fire off the listener for some reason
+            isWhiteTurn = false;
+        }
+        //store castle data
         if (details[1].contains("K"))
             whiteCastleK = true;
         if (details[1].contains("Q"))
@@ -98,7 +106,21 @@ public class ChessBoard {
             if (col != 7)
                 newFEN += "/";
         }
-        //append additional data here
+        //turn data
+        if (isWhiteTurn)
+            newFEN += " w ";
+        else
+            newFEN += " b ";
+        //castle data
+        if (whiteCastleK)
+            newFEN += "K";
+        if (whiteCastleQ)
+            newFEN += "Q";
+        if (blackCastleK)
+            newFEN += "k";
+        if (blackCastleQ)
+            newFEN += "q";
+
         return newFEN;
     }
 
