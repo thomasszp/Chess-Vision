@@ -260,99 +260,52 @@ public class MainActivity extends AppCompatActivity {
         //clear data
         optionLayout.removeAllViews();
 
-        //query db for each move and respective data
+        //query db for each move and respective data. Results in nextMoves global
         queryFutureMoves();
 
-        // Get top 4 options for display
-        Map<String, Integer> topMoves = new HashMap<String, Integer>();
-        String[] topMove1 = {"", "0"};
-        String[] topMove2 = {"", "0"};
-        String[] topMove3 = {"", "0"};
-        String[] topMove4 = {"", "0"};
-
+        Log.d("TAG","Sorting Results... " + new Timestamp(System.currentTimeMillis()));
+        // Sort top 10 options for display
+        String[][] topMoves = new String[10][2];
+        for (int i = 0; i < 10; i++) {
+            topMoves[i] = new String[]{"", "0"};
+        }
         for (String fen : nextMoves.keySet()) {
             int[] outcomes = nextMoves.get(fen);
             int total = outcomes[0] + outcomes[1] + outcomes[2];
-            if (total > Integer.parseInt(topMove1[1])) {
-                topMove4 = topMove3;
-                topMove3 = topMove2;
-                topMove2 = topMove1;
-                topMove1 = new String[]{fen, String.valueOf(total)};
-            } else if (total > Integer.parseInt(topMove2[1])) {
-                topMove4 = topMove3;
-                topMove3 = topMove2;
-                topMove2 = new String[]{fen, String.valueOf(total)};
-            } else if (total > Integer.parseInt(topMove3[1])) {
-                topMove4 = topMove3;
-                topMove3 = new String[]{fen, String.valueOf(total)};
-            } else if (total > Integer.parseInt(topMove4[1])) {
-                topMove4 = new String[]{fen, String.valueOf(total)};
+            boolean found = false;
+            for (int i = 0; i < 10; i++) {
+                if (found && i < 9)
+                    topMoves[i+1] = topMoves[i];
+                if (total > Integer.parseInt(topMoves[i][1]) && !found) {
+                    found = true;
+                    if (i < 9)
+                        topMoves[i+1] = topMoves[i];
+                    topMoves[i] = new String[]{fen, String.valueOf(total)};
+                    i++;
+                }
             }
         }
-        Log.d("TAG", topMove1[0] + " : " + topMove1[1]);
-        Log.d("TAG", topMove2[0] + " : " + topMove2[1]);
-        Log.d("TAG", topMove3[0] + " : " + topMove3[1]);
-        Log.d("TAG", topMove4[0] + " : " + topMove4[1]);
 
-        int tieCount, winCount, lossCount;
-        String tiePct, winPct, lossPct;
+        Log.d("TAG","Creating Options... " + new Timestamp(System.currentTimeMillis()));
+        // Create option for each move
+        for (String[] move : topMoves) {
+            int tieCount, winCount, lossCount;
+            String tiePct, winPct, lossPct;
 
-        // Create option for topMove1
-        tieCount = nextMoves.get(topMove1[0])[0];
-        if (baseBoard.isWhiteTurn()) {
-            winCount = nextMoves.get(topMove1[0])[1];
-            lossCount = nextMoves.get(topMove1[0])[2];
-        } else {
-            winCount = nextMoves.get(topMove1[0])[2];
-            lossCount = nextMoves.get(topMove1[0])[1];
+            tieCount = nextMoves.get(move[0])[0];
+            if (baseBoard.isWhiteTurn()) {
+                winCount = nextMoves.get(move[0])[1];
+                lossCount = nextMoves.get(move[0])[2];
+            } else {
+                winCount = nextMoves.get(move[0])[2];
+                lossCount = nextMoves.get(move[0])[1];
+            }
+
+            tiePct = String.valueOf((int)((tieCount / Double.parseDouble(move[1]))*100));
+            winPct = String.valueOf((int)((winCount / Double.parseDouble(move[1]))*100));
+            lossPct = String.valueOf((int)((lossCount / Double.parseDouble(move[1]))*100));
+            optionLayout.addView(NewOption(baseBoard.pieceChanged(move[0]), "", "", winPct,tiePct,lossPct));
         }
-        tiePct = String.valueOf((int)((tieCount / Double.parseDouble(topMove1[1]))*100));
-        winPct = String.valueOf((int)((winCount / Double.parseDouble(topMove1[1]))*100));
-        lossPct = String.valueOf((int)((lossCount / Double.parseDouble(topMove1[1]))*100));
-        optionLayout.addView(NewOption(baseBoard.pieceChanged(topMove1[0]), "", "", winPct,tiePct,lossPct));
-
-        // Create option for topMove2
-        tieCount = nextMoves.get(topMove2[0])[0];
-        if (baseBoard.isWhiteTurn()) {
-            winCount = nextMoves.get(topMove2[0])[2];
-            lossCount = nextMoves.get(topMove2[0])[1];
-        } else {
-            winCount = nextMoves.get(topMove2[0])[1];
-            lossCount = nextMoves.get(topMove2[0])[2];
-        }
-        tiePct = String.valueOf((int)((tieCount / Double.parseDouble(topMove2[1]))*100));
-        winPct = String.valueOf((int)((winCount / Double.parseDouble(topMove2[1]))*100));
-        lossPct = String.valueOf((int)((lossCount / Double.parseDouble(topMove2[1]))*100));
-        optionLayout.addView(NewOption(baseBoard.pieceChanged(topMove2[0]), "", "", winPct,tiePct,lossPct));
-
-        // Create option for topMove3
-        tieCount = nextMoves.get(topMove3[0])[0];
-        if (baseBoard.isWhiteTurn()) {
-            winCount = nextMoves.get(topMove3[0])[1];
-            lossCount = nextMoves.get(topMove3[0])[2];
-        } else {
-            winCount = nextMoves.get(topMove3[0])[2];
-            lossCount = nextMoves.get(topMove3[0])[1];
-        }
-        tiePct = String.valueOf((int)((tieCount / Double.parseDouble(topMove3[1]))*100));
-        winPct = String.valueOf((int)((winCount / Double.parseDouble(topMove3[1]))*100));
-        lossPct = String.valueOf((int)((lossCount / Double.parseDouble(topMove3[1]))*100));
-        optionLayout.addView(NewOption(baseBoard.pieceChanged(topMove3[0]), "", "", winPct,tiePct,lossPct));
-
-        // Create option for topMove4
-        tieCount = nextMoves.get(topMove4[0])[0];
-        if (baseBoard.isWhiteTurn()) {
-            winCount = nextMoves.get(topMove4[0])[1];
-            lossCount = nextMoves.get(topMove4[0])[2];
-        } else {
-            winCount = nextMoves.get(topMove4[0])[2];
-            lossCount = nextMoves.get(topMove4[0])[1];
-        }
-        tiePct = String.valueOf((int)((tieCount / Double.parseDouble(topMove4[1]))*100));
-        winPct = String.valueOf((int)((winCount / Double.parseDouble(topMove4[1]))*100));
-        lossPct = String.valueOf((int)((lossCount / Double.parseDouble(topMove4[1]))*100));
-        optionLayout.addView(NewOption(baseBoard.pieceChanged(topMove4[0]), "", "", winPct,tiePct,lossPct));
-
     }
 
     //is called every time the board updates
@@ -368,12 +321,15 @@ public class MainActivity extends AppCompatActivity {
             }
             Python py = Python.getInstance();                                           //create instance
             PyObject pyObj = py.getModule("pythonQueries");                             //create object
+            Log.d("TAG","Querying DB... " + new Timestamp(System.currentTimeMillis()));
             PyObject obj = pyObj.callAttr("getNewOptions", currentFEN, moveSelects);    //call function
-            //Log.d("TAG", obj.toString());                                               //get returned String
+            Log.d("TAG","Grouping Results... " + new Timestamp(System.currentTimeMillis()));
             for (PyObject o : obj.asList()) {
                 //Log.d("TAG", o.toString());
                 for (int i = 5; i < o.asList().size(); i++) {
-                    if ("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq".equals(o.asList().get(i).toString())) {
+                    if (o.asList().get(i+1).toString().equals(""))  //The next move must have an FEN value
+                        break;
+                    if (baseBoard.generateFEN().equals(o.asList().get(i).toString())) {
                         // Do we already track this next move?
                         int[] outcomes = {0,0,0};
                         if (nextMoves.containsKey(o.asList().get(i+1).toString()))
@@ -404,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, e.toString());
             throw new RuntimeException(e);
         }
+        Log.d("TAG", String.valueOf(new Timestamp(System.currentTimeMillis())));
     }
 
     //Returns string of all moves cols that need to be searched in db query
@@ -412,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
         String fen = baseBoard.generateFEN();
         int minMoves = calculateMinMoves(fen);
         for (int i = minMoves - 1; i < 38; i++) {
-            fullText += moveColNames[i] + " LIKE '" + fen + "%'";
+            fullText += moveColNames[i] + " = '" + fen + "'";
             if (i != 37)
                 fullText += " OR ";
         }

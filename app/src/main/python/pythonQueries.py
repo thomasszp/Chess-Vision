@@ -29,6 +29,7 @@ def getNewOptions(fen, moves):
 
     q = " SELECT * FROM MASTER"
     q += " WHERE " + moves  # Check if every move applies to the current FEN. moves is set in a function beforehand
+    #return q
     cursor.execute(q)
     rs = cursor.fetchall()
     cnx.close()

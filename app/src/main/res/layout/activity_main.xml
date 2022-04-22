@@ -21,10 +21,16 @@
             android:id="@+id/prevMoves"
             android:layout_width="150dp"
             android:layout_height="40dp"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/queryBtn"
+            android:text="Search"
+            android:layout_marginStart="20dp"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"/>
         <androidx.appcompat.widget.ActionMenuView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="130dp"
+            android:layout_marginStart="30dp"
             android:onClick="boardRefresh"
             android:background="@drawable/baseline_refresh_white_36"/>
         <androidx.appcompat.widget.ActionMenuView
