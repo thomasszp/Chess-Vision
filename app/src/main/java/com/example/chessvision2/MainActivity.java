@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     Spinner prevMovesDropdown;                          //Spinner for previously executed moves in descending order
     String[] prevMoves = {};                            //Array of all past moves, adapted into spinner dynamically
     ArrayAdapter<String> spinnerArrayAdapter;           //Spinner adapter
-    SwitchCompat turnSwitch;                            //switch for toggling white or black turn state
+    static SwitchCompat turnSwitch;                            //switch for toggling white or black turn state
     Map<String, int[]> nextMoves = new HashMap<String, int[]>();    //Map of FENs back from the
     //ChessBoard exampleBoard = new ChessBoard();
 
