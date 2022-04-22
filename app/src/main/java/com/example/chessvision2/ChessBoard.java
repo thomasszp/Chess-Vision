@@ -1,10 +1,6 @@
 package com.example.chessvision2;
 
-import android.support.v4.app.INotificationSideChannel;
-import android.support.v4.os.IResultReceiver;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class ChessBoard {
@@ -13,7 +9,7 @@ public class ChessBoard {
     private boolean whiteCastleK = false;
     private boolean blackCastleQ = false;
     private boolean blackCastleK = false;
-    private boolean playerTurn = true;  //white turn default true
+    private boolean isWhiteTurn = true;  //white turn default true
 
     //default constructor i guess
     public ChessBoard() {}
@@ -60,9 +56,9 @@ public class ChessBoard {
 
         //hopefully we only need to deal with 2, maybe 3 of these details
         if (details[0] == "w")
-            playerTurn = true;
+            setWhiteTurn(true);
         else
-            playerTurn = false;
+            setWhiteTurn(false);
 
         if (details[1].contains("K"))
             whiteCastleK = true;
@@ -157,7 +153,7 @@ public class ChessBoard {
 
         piece.setRow(coordx);
         piece.setCol(coordy);
-        playerTurn = !playerTurn;
+        setWhiteTurn(!isWhiteTurn());
     }
 
     //Delete piece at location
@@ -269,5 +265,13 @@ public class ChessBoard {
         }
         board += "   A B C D E F G H";
         return board;
+    }
+
+    public boolean isWhiteTurn() {
+        return isWhiteTurn;
+    }
+
+    public void setWhiteTurn(boolean whiteTurn) {
+        isWhiteTurn = whiteTurn;
     }
 }

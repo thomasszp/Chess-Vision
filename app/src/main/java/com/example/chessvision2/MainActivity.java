@@ -1,6 +1,7 @@
 package com.example.chessvision2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.os.Bundle;
@@ -10,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -25,7 +28,9 @@ import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.math.*;
 import java.sql.*;
@@ -33,10 +38,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
-    private Connection DBH; // DataBase Host: JDBC connection to our MySQL server
-
     private static final String [][] boardSquares = {
             {"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"},
             {"A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"},
@@ -56,13 +60,16 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "mainTag";
     ChessBoard baseBoard;
     GridLayout boardGrid;
-    LinearLayout boardBackground;               //LinearLayout delete space for pieces
-    LinearLayout optionLayout;                  //LinearLayout housing all options
-    View.OnClickListener optionListener;        //Listener for all options
-    View.OnClickListener backgroundListener;    //Listener for delete space for pieces
-    Spinner prevMovesDropdown;                  //Spinner for previously executed moves in descending order
-    String[] prevMoves = {};                    //Array of all past moves, adapted into spinner dynamically
-    ArrayAdapter<String> spinnerArrayAdapter;   //Spinner adapter
+    LinearLayout boardBackground;                       //LinearLayout delete space for pieces
+    LinearLayout optionLayout;                          //LinearLayout housing all options
+    View.OnClickListener optionListener;                //Listener for all options
+    View.OnClickListener backgroundListener;            //Listener for delete space for pieces
+    SwitchCompat.OnCheckedChangeListener turnListener;  //Listener for turn toggle
+    Spinner prevMovesDropdown;                          //Spinner for previously executed moves in descending order
+    String[] prevMoves = {};                            //Array of all past moves, adapted into spinner dynamically
+    ArrayAdapter<String> spinnerArrayAdapter;           //Spinner adapter
+    SwitchCompat turnSwitch;                            //switch for toggling white or black turn state
+    Map<String, int[]> nextMoves = new HashMap<String, int[]>();    //Map of FENs back from the
     //ChessBoard exampleBoard = new ChessBoard();
 
     @Override
@@ -77,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         // Load all XML controls into variables
         optionLayout = findViewById(R.id.optionLayout);
         prevMovesDropdown = findViewById(R.id.prevMoves);
+        turnSwitch = findViewById(R.id.turnSwitch);
         // Control listeners
         optionListener = new View.OnClickListener() {
             @Override
@@ -84,6 +92,13 @@ public class MainActivity extends AppCompatActivity {
                 NextMove((LinearLayout) v);
             }
         };
+        turnListener = new SwitchCompat.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean switchState) {
+                baseBoard.setWhiteTurn(switchState);
+            }
+        };
+
         //listener for clicking outside board
         boardBackground = (LinearLayout) findViewById(R.id.boardBackground);
         boardBackground.setOnClickListener(new View.OnClickListener() {
@@ -106,12 +121,10 @@ public class MainActivity extends AppCompatActivity {
         // Test loading the board from FEN
         try {
             //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
-            //baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
+            baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
             //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
-            //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
-            baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1");
+            //baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1");
             loadBoard(baseBoard);
-            Log.d(TAG, baseBoard.pieceChanged("rnbqkb1r/pppppppp/5n2/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1"));
         } catch (Exception e) {
             Log.d(TAG, e.toString());
             e.printStackTrace();
@@ -158,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         //get new recommended moves
         if (calculateMinMoves(baseBoard.generateFEN()) > 0) {
             loadDisplayedMoves();
-        }
+        }   //TODO: Make this work without this if statement
     }
 
     private void clearBoard() {
@@ -248,19 +261,106 @@ public class MainActivity extends AppCompatActivity {
         optionLayout.removeAllViews();
 
         //query db for each move and respective data
-        String[][] moveData = queryFutureMoves();
+        queryFutureMoves();
 
-        //prob will need to write function to compare FEN values to get next move data
-        for (int i = 0; i < 3; i++) {
-            optionLayout.addView(NewOption("black_king", "--", "--", moveData[i][0], moveData[i][0], moveData[i][0]));
+        // Get top 4 options for display
+        Map<String, Integer> topMoves = new HashMap<String, Integer>();
+        String[] topMove1 = {"", "0"};
+        String[] topMove2 = {"", "0"};
+        String[] topMove3 = {"", "0"};
+        String[] topMove4 = {"", "0"};
+
+        for (String fen : nextMoves.keySet()) {
+            int[] outcomes = nextMoves.get(fen);
+            int total = outcomes[0] + outcomes[1] + outcomes[2];
+            if (total > Integer.parseInt(topMove1[1])) {
+                topMove4 = topMove3;
+                topMove3 = topMove2;
+                topMove2 = topMove1;
+                topMove1 = new String[]{fen, String.valueOf(total)};
+            } else if (total > Integer.parseInt(topMove2[1])) {
+                topMove4 = topMove3;
+                topMove3 = topMove2;
+                topMove2 = new String[]{fen, String.valueOf(total)};
+            } else if (total > Integer.parseInt(topMove3[1])) {
+                topMove4 = topMove3;
+                topMove3 = new String[]{fen, String.valueOf(total)};
+            } else if (total > Integer.parseInt(topMove4[1])) {
+                topMove4 = new String[]{fen, String.valueOf(total)};
+            }
         }
+        Log.d("TAG", topMove1[0] + " : " + topMove1[1]);
+        Log.d("TAG", topMove2[0] + " : " + topMove2[1]);
+        Log.d("TAG", topMove3[0] + " : " + topMove3[1]);
+        Log.d("TAG", topMove4[0] + " : " + topMove4[1]);
+
+        int tieCount, winCount, lossCount;
+        String tiePct, winPct, lossPct;
+
+        // Create option for topMove1
+        tieCount = nextMoves.get(topMove1[0])[0];
+        if (baseBoard.isWhiteTurn()) {
+            winCount = nextMoves.get(topMove1[0])[1];
+            lossCount = nextMoves.get(topMove1[0])[2];
+        } else {
+            winCount = nextMoves.get(topMove1[0])[2];
+            lossCount = nextMoves.get(topMove1[0])[1];
+        }
+        tiePct = String.valueOf((int)((tieCount / Double.parseDouble(topMove1[1]))*100));
+        winPct = String.valueOf((int)((winCount / Double.parseDouble(topMove1[1]))*100));
+        lossPct = String.valueOf((int)((lossCount / Double.parseDouble(topMove1[1]))*100));
+        optionLayout.addView(NewOption(baseBoard.pieceChanged(topMove1[0]), "", "", winPct,tiePct,lossPct));
+
+        // Create option for topMove2
+        tieCount = nextMoves.get(topMove2[0])[0];
+        if (baseBoard.isWhiteTurn()) {
+            winCount = nextMoves.get(topMove2[0])[2];
+            lossCount = nextMoves.get(topMove2[0])[1];
+        } else {
+            winCount = nextMoves.get(topMove2[0])[1];
+            lossCount = nextMoves.get(topMove2[0])[2];
+        }
+        tiePct = String.valueOf((int)((tieCount / Double.parseDouble(topMove2[1]))*100));
+        winPct = String.valueOf((int)((winCount / Double.parseDouble(topMove2[1]))*100));
+        lossPct = String.valueOf((int)((lossCount / Double.parseDouble(topMove2[1]))*100));
+        optionLayout.addView(NewOption(baseBoard.pieceChanged(topMove2[0]), "", "", winPct,tiePct,lossPct));
+
+        // Create option for topMove3
+        tieCount = nextMoves.get(topMove3[0])[0];
+        if (baseBoard.isWhiteTurn()) {
+            winCount = nextMoves.get(topMove3[0])[1];
+            lossCount = nextMoves.get(topMove3[0])[2];
+        } else {
+            winCount = nextMoves.get(topMove3[0])[2];
+            lossCount = nextMoves.get(topMove3[0])[1];
+        }
+        tiePct = String.valueOf((int)((tieCount / Double.parseDouble(topMove3[1]))*100));
+        winPct = String.valueOf((int)((winCount / Double.parseDouble(topMove3[1]))*100));
+        lossPct = String.valueOf((int)((lossCount / Double.parseDouble(topMove3[1]))*100));
+        optionLayout.addView(NewOption(baseBoard.pieceChanged(topMove3[0]), "", "", winPct,tiePct,lossPct));
+
+        // Create option for topMove4
+        tieCount = nextMoves.get(topMove4[0])[0];
+        if (baseBoard.isWhiteTurn()) {
+            winCount = nextMoves.get(topMove4[0])[1];
+            lossCount = nextMoves.get(topMove4[0])[2];
+        } else {
+            winCount = nextMoves.get(topMove4[0])[2];
+            lossCount = nextMoves.get(topMove4[0])[1];
+        }
+        tiePct = String.valueOf((int)((tieCount / Double.parseDouble(topMove4[1]))*100));
+        winPct = String.valueOf((int)((winCount / Double.parseDouble(topMove4[1]))*100));
+        lossPct = String.valueOf((int)((lossCount / Double.parseDouble(topMove4[1]))*100));
+        optionLayout.addView(NewOption(baseBoard.pieceChanged(topMove4[0]), "", "", winPct,tiePct,lossPct));
+
     }
 
     //is called every time the board updates
     //gets every next move from current FEN
-    private String[][] queryFutureMoves() {
+    private void queryFutureMoves() {
         String moveSelects = generateQueryMoves();
         String currentFEN = baseBoard.generateFEN();
+        int winCount,lossCount,tieCount;
 
         try {
             if (! Python.isStarted()) {
@@ -271,77 +371,39 @@ public class MainActivity extends AppCompatActivity {
             PyObject obj = pyObj.callAttr("getNewOptions", currentFEN, moveSelects);    //call function
             //Log.d("TAG", obj.toString());                                               //get returned String
             for (PyObject o : obj.asList()) {
-                Log.d("TAG", o.toString());
-                Log.d("TAG", "Size: " + o.size());
-                Log.d("TAG", "ID: " + o);
-            }
+                //Log.d("TAG", o.toString());
+                for (int i = 5; i < o.asList().size(); i++) {
+                    if ("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq".equals(o.asList().get(i).toString())) {
+                        // Do we already track this next move?
+                        int[] outcomes = {0,0,0};
+                        if (nextMoves.containsKey(o.asList().get(i+1).toString()))
+                            outcomes = nextMoves.get(o.asList().get(i+1).toString());
 
+                        // Increment game end state
+                        if (o.asList().get(2).toInt() == 0)         // tie
+                            outcomes[0] += 1;
+                        else if (o.asList().get(2).toInt() == 1)    //White win
+                            outcomes[1] += 1;
+                        else if (o.asList().get(2).toInt() == 2)    //Black win
+                            outcomes[2] += 1;
+
+                        // Save FEN and corresponding end-game states to global map
+                        nextMoves.put(o.asList().get(i+1).toString(), outcomes);
+
+                        //Log.d("TAG", nextMoves.toString());
+                        //Log.d("TAG", "   Tie: " + nextMoves.get(o.asList().get(i+1).toString())[0]);
+                        //Log.d("TAG", " White: " + nextMoves.get(o.asList().get(i+1).toString())[1]);
+                        //Log.d("TAG", " Black: " + nextMoves.get(o.asList().get(i+1).toString())[2]);
+                        break;
+                        // TODO: Put this shit in a function for Tom^^^^
+                    }   // TODO: Make sure we don't do out of bounds error if i+2 > o.asList().size()
+                }
+            }
         }
         catch (Exception e){
             Log.d(TAG, e.toString());
             throw new RuntimeException(e);
         }
-
-        String queryText = "SELECT " + moveSelects + ", .., .." + " ... FROM ... WHERE FEN = " + currentFEN;
-        String[][] queryData = {{"--", "--", "--", "--"}, {"--", "--", "--", "--"}, {"--", "--", "--", "--"}};
-
-        Statement stmt;
-        try {
-            stmt = DBH.createStatement();
-        } catch (Exception e) {
-            Log.d("Connection-Failed", e.toString());
-            return queryData;
-        }
-
-        int moveIndex = 0;
-        try {
-            ResultSet rs = stmt.executeQuery(queryText);
-            while (rs.next()) {
-                //not sure what or how many fields needed yet
-                //going to need another function to calculate win-rate and stuff
-                queryData[moveIndex][0] = rs.getString("FEN");
-                queryData[moveIndex][1] = rs.getString("");
-                int data = rs.getInt("");
-                int info = rs.getInt("");
-                moveIndex++;
-            }
-        } catch (SQLException e) {
-            Log.d("Query-Failed", e.toString());
-            return queryData;
-        }
-        return queryData;
-    }
-
-    //Called to find winrate about fen returned from queryFutureMoves
-    //queries  and popularity of FEN values
-    private String[] queryFENData(String FEN) {
-        String currentFEN = baseBoard.generateFEN();
-        String queryText = "SELECT winrates, etc ... FROM ... WHERE FEN = " + FEN;
-        String[] queryData = {"", "", "", ""};
-
-        Statement stmt;
-        try {
-            stmt = DBH.createStatement();
-        } catch (Exception e) {
-            Log.d("Connection-Failed", e.toString());
-            return queryData;
-        }
-
-        try {
-            ResultSet rs = stmt.executeQuery(queryText);
-            while (rs.next()) {
-                //not sure what or how many fields needed yet
-                //going to need another function to calculate win-rate and stuff
-                queryData[0] = rs.getString("blackwinpercentage");
-                queryData[1] = rs.getString("whitewinpercentage");
-                int data = rs.getInt("totalgames");
-                int info = rs.getInt("idk");
-            }
-        } catch (SQLException e) {
-            Log.d("Query-Failed", e.toString());
-            return queryData;
-        }
-        return queryData;
     }
 
     //Returns string of all moves cols that need to be searched in db query
