@@ -57,9 +57,6 @@ public class ChessBoard {
             colIndex++;
         }
 
-        //SwitchCompat turnSwitch;
-
-
         //Sets player turn by flipping switch and storing variable
         if (details[0].equals("w")) {
             MainActivity.turnSwitch.setChecked(true);   //setChecked does not fire off the listener for some reason
@@ -160,7 +157,9 @@ public class ChessBoard {
                 }
                 //if to and from and found, return all data
                 if (foundChange1 && foundChange2) {
-                    String pieceName = new ChessPiece(0, 0, getPlayer(otherRows[i].charAt(j)), getType(otherRows[i].charAt(j))).findPieceName();
+                    ChessPlayer player1 = getPlayer(originalRows[Integer.parseInt(pieceFromRow)].charAt(Integer.parseInt(pieceFromCol)));
+                    ChessType piece1 = getType(originalRows[Integer.parseInt(pieceFromRow)].charAt(Integer.parseInt(pieceFromCol)));
+                    String pieceName = new ChessPiece(0, 0, player1, piece1).findPieceName();
                     return new String[] {pieceName, pieceFromRow, pieceFromCol, pieceToRow, pieceToCol};
                 }
             }
