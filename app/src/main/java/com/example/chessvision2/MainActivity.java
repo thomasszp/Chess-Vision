@@ -62,19 +62,19 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "mainTag";
     ChessBoard baseBoard;
     GridLayout boardGrid;
-    LinearLayout boardBackground;                       //LinearLayout delete space for pieces
-    LinearLayout optionLayout;                          //LinearLayout housing all options
-    AppCompatButton searchBtn;                          //AppCompatButton for searching the DB
-    View.OnClickListener searchBtnListener;             //Listener for searchBtn
-    View.OnClickListener optionListener;                //Listener for all options
-    View.OnClickListener backgroundListener;            //Listener for delete space for pieces
-    SwitchCompat.OnCheckedChangeListener turnListener;  //Listener for turn toggle
-    Spinner prevMovesDropdown;                          //Spinner for previously executed moves in descending order
-    String[] prevMoves = {};                            //Array of all past moves, adapted into spinner dynamically
-    ArrayAdapter<String> spinnerArrayAdapter;           //Spinner adapter
-    static SwitchCompat turnSwitch;                            //switch for toggling white or black turn state
+    LinearLayout boardBackground;                                   //LinearLayout delete space for pieces
+    LinearLayout optionLayout;                                      //LinearLayout housing all options
+    AppCompatButton searchBtn;                                      //AppCompatButton for searching the DB
+    View.OnClickListener searchBtnListener;                         //Listener for searchBtn
+    View.OnClickListener optionListener;                            //Listener for all options
+    View.OnClickListener backgroundListener;                        //Listener for delete space for pieces
+    SwitchCompat.OnCheckedChangeListener turnListener;              //Listener for turn toggle
+    Spinner prevMovesDropdown;                                      //Spinner for previously executed moves in descending order
+    String[] prevMoves = {};                                        //Array of all past moves, adapted into spinner dynamically
+    ArrayAdapter<String> spinnerArrayAdapter;                       //Spinner adapter
+    static SwitchCompat turnSwitch;                                 //switch for toggling white or black turn state
     Map<String, int[]> nextMoves = new HashMap<String, int[]>();    //Map of FENs back from the
-    //ChessBoard exampleBoard = new ChessBoard();
+    String searchFEN;                                               //FEN of board state at last search
 
     @Override
     // General onCreate function. This runs when the app launches
@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         baseBoard = new ChessBoard();
 
         // Load all XML controls into variables
+        boardGrid = findViewById(R.id.boardGrid);
         optionLayout = findViewById(R.id.optionLayout);
         prevMovesDropdown = findViewById(R.id.prevMoves);
         searchBtn = findViewById(R.id.queryBtn);
@@ -108,13 +109,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //get new recommended moves
                 if (calculateMinMoves(baseBoard.generateFEN()) > 0) {
+                    searchFEN = baseBoard.generateFEN();
                     loadDisplayedMoves();
-                }   //TODO: Make this work without this if statement
+                }   //TODO: Write secondary query getting just MOVE1 when the board is at starting position
             }
         };
-
-        //turnSwitch.setOnCheckedChangeListener(turnListener);  //TODO: This breaks things
-        searchBtn.setOnClickListener(searchBtnListener);
 
         //listener for clicking outside board
         boardBackground = (LinearLayout) findViewById(R.id.boardBackground);
@@ -126,15 +125,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //listener for each box in GridLayout board
-        boardGrid = (GridLayout)findViewById(R.id.boardGrid);
         boardClickedEvent(boardGrid);
+        turnSwitch.setOnCheckedChangeListener(turnListener);
+        searchBtn.setOnClickListener(searchBtnListener);
 
         // Load past move into array for dropdown
-        AddPrevMove("Nc6");
+        // TODO: Remove the previous move dropdown
         LoadPrevMoveSpinner();
 
         // Load the board from FEN
-        //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");
+        //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");  //Evan's Gambit
         baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
         //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
         //baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1");
@@ -307,7 +307,6 @@ public class MainActivity extends AppCompatActivity {
     //gets every next move from current FEN
     private void queryFutureMoves() {
         String moveSelects = generateQueryMoves();
-        String currentFEN = baseBoard.generateFEN();
         int winCount,lossCount,tieCount;
 
         try {
@@ -317,14 +316,14 @@ public class MainActivity extends AppCompatActivity {
             Python py = Python.getInstance();                                           //create instance
             PyObject pyObj = py.getModule("pythonQueries");                             //create object
             Log.d("TAG","Querying DB... " + new Timestamp(System.currentTimeMillis()));
-            PyObject obj = pyObj.callAttr("getNewOptions", currentFEN, moveSelects);    //call function
+            PyObject obj = pyObj.callAttr("getNewOptions", searchFEN, moveSelects);    //call function
             Log.d("TAG","Grouping Results... " + new Timestamp(System.currentTimeMillis()));
+            Log.d("TAG", obj.toString());
             for (PyObject o : obj.asList()) {
-                //Log.d("TAG", o.toString());
                 for (int i = 5; i < o.asList().size(); i++) {
                     if (o.asList().get(i+1).toString().equals(""))  //The next move must have an FEN value
                         break;
-                    if (baseBoard.generateFEN().equals(o.asList().get(i).toString())) {
+                    if (searchFEN.equals(o.asList().get(i).toString())) {
                         // Do we already track this next move?
                         int[] outcomes = {0,0,0};
                         if (nextMoves.containsKey(o.asList().get(i+1).toString()))
@@ -355,13 +354,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, e.toString());
             throw new RuntimeException(e);
         }
-        Log.d("TAG", String.valueOf(new Timestamp(System.currentTimeMillis())));
     }
 
     //Returns string of all moves cols that need to be searched in db query
     private String generateQueryMoves() {
         String fullText = "";
-        String fen = baseBoard.generateFEN();
+        String fen = searchFEN;
         int minMoves = calculateMinMoves(fen);
         for (int i = minMoves - 1; i < 38; i++) {
             fullText += moveColNames[i] + " = '" + fen + "'";
@@ -389,6 +387,7 @@ public class MainActivity extends AppCompatActivity {
         TextView currentSquareView = (TextView) option.getChildAt(1);
         TextView nextSquareView = (TextView) option.getChildAt(3);
 
+        baseBoard.generateFromFEN(searchFEN);
         ChessPiece toMove = null;
         int moveToX = 0;
         int moveToY = 0;
@@ -406,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         baseBoard.movePiece(toMove, moveToX, moveToY);
-        baseBoard.setWhiteTurn(!baseBoard.isWhiteTurn());
+        turnSwitch.setChecked(baseBoard.isWhiteTurn());
         loadBoard(baseBoard);
 
         // Get views by ID in string form
