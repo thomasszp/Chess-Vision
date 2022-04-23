@@ -25,7 +25,7 @@ android {
                 install "mysql-connector-python"
             }
             //YOUR LOCAL FILEPATH HERE
-            buildPython "C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python37_64/python.exe"
+            buildPython "C:/Users/Adam/AppData/Local/Programs/Python/Python38/python.exe"
         }
         sourceSets {
             main {
