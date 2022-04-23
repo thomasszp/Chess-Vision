@@ -2,6 +2,7 @@ package com.example.chessvision2;
 
 import androidx.appcompat.widget.SwitchCompat;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,24 +126,47 @@ public class ChessBoard {
     }
 
     //compares two FEN values, and finds the last moved piece
-    //returns name of drawable piece
-    public String pieceChanged(String otherFEN) {
+    //Returned String array contains piece name, and locations of coordinates moved
+    // {name, x1, y1, x2, y2}
+    public String[] pieceChanged(String otherFEN) {
         //get each piece row of fen values
         String[] originalRows = generateFEN().split(" ", 2)[0].split("/");
         String[] otherRows = otherFEN.split(" ", 2)[0].split("/");
         originalRows = fillFEN(originalRows);
         otherRows = fillFEN(otherRows);
 
+        String pieceToRow = "";
+        String pieceToCol = "";
+        String pieceFromRow = "";
+        String pieceFromCol = "";
+        boolean foundChange1 = false;
+        boolean foundChange2 = false;
+
         //loop through each row
         for (int i = 0; i < 8; i++) {
             //loop through each col
             for (int j = 0; j < 8; j++) {
-                if (otherRows[i].charAt(j) != originalRows[i].charAt(j) && otherRows[i].charAt(j) != '-')
-                    return new ChessPiece(0, 0, getPlayer(otherRows[i].charAt(j)), getType(otherRows[i].charAt(j))).findPieceName();
+                //finds where piece is being moved to
+                if (otherRows[i].charAt(j) != originalRows[i].charAt(j) && otherRows[i].charAt(j) != '-') {
+                    pieceToRow = String.valueOf(i);
+                    pieceToCol = String.valueOf(j);
+                    foundChange1 = true;
+                }
+                //finds where piece is being moved from
+                if (otherRows[i].charAt(j) != originalRows[i].charAt(j) && otherRows[i].charAt(j) == '-') {
+                    pieceFromRow = String.valueOf(i);
+                    pieceFromCol = String.valueOf(j);
+                    foundChange2 = true;
+                }
+                //if to and from and found, return all data
+                if (foundChange1 && foundChange2) {
+                    String pieceName = new ChessPiece(0, 0, getPlayer(otherRows[i].charAt(j)), getType(otherRows[i].charAt(j))).findPieceName();
+                    return new String[] {pieceName, pieceFromRow, pieceFromCol, pieceToRow, pieceToCol};
+                }
             }
         }
-        //default image in case something goes wrong
-        return "white_pawn";
+        //default location in case something goes wrong
+        return new String[] {"white_pawn", "0", "0", "0", "0"};
     }
 
     //pass in array of fen rows

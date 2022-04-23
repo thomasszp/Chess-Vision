@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadBoard(ChessBoard board) {
         //clear board
         clearBoard();
-
+        turnSwitch.setChecked(baseBoard.isWhiteTurn());
         //put all pieces on new board
         for (ChessPiece piece : board.getPieces()) {
             SetGridSpace(piece, piece.getRow(), piece.getCol());
@@ -293,8 +293,14 @@ public class MainActivity extends AppCompatActivity {
             tiePct = String.valueOf((int)((tieCount / Double.parseDouble(move.get(1)))*100));
             winPct = String.valueOf((int)((winCount / Double.parseDouble(move.get(1)))*100));
             lossPct = String.valueOf((int)((lossCount / Double.parseDouble(move.get(1)))*100));
-            optionLayout.addView(NewOption(baseBoard.pieceChanged(move.get(0)), "", "", winPct,tiePct,lossPct));
+            String[] pieceChanged = baseBoard.pieceChanged(move.get(0));
+            String pieceName = pieceChanged[0];
+            String fromSquare = boardSquares[Integer.parseInt(pieceChanged[1])][Integer.parseInt(pieceChanged[2])];
+            String toSquare = boardSquares[Integer.parseInt(pieceChanged[3])][Integer.parseInt(pieceChanged[4])];
+            optionLayout.addView(NewOption(pieceName, fromSquare, toSquare, winPct,tiePct,lossPct));
         }
+        //Clear nextMoves map once done with it
+        nextMoves.clear();
     }
 
     //is called every time the board updates
@@ -383,15 +389,35 @@ public class MainActivity extends AppCompatActivity {
         TextView currentSquareView = (TextView) option.getChildAt(1);
         TextView nextSquareView = (TextView) option.getChildAt(3);
 
+        ChessPiece toMove = null;
+        int moveToX = 0;
+        int moveToY = 0;
+
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
+                if (boardSquares[col][row] == currentSquareView.getText()) {
+                    toMove = baseBoard.pieceLocation(row, col);
+                }
+                if (boardSquares[col][row] == nextSquareView.getText()) {
+                    moveToX = row;
+                    moveToY = col;
+                }
+            }
+        }
+
+        baseBoard.movePiece(toMove, moveToX, moveToY);
+        baseBoard.setWhiteTurn(!baseBoard.isWhiteTurn());
+        loadBoard(baseBoard);
+
         // Get views by ID in string form
-        int currentSquareID = getResources().getIdentifier((String) currentSquareView.getText(), "id", getPackageName());
-        int nextSquareID = getResources().getIdentifier((String) nextSquareView.getText(), "id", getPackageName());
-        ImageView currentSquare = findViewById(currentSquareID);
-        ImageView nextSquare = findViewById(nextSquareID);
+        //int currentSquareID = getResources().getIdentifier((String) currentSquareView.getText(), "id", getPackageName());
+        //int nextSquareID = getResources().getIdentifier((String) nextSquareView.getText(), "id", getPackageName());
+        //ImageView currentSquare = findViewById(currentSquareID);
+        //ImageView nextSquare = findViewById(nextSquareID);
 
         // Put piece into nextSquare, remove piece from currentSquare
-        nextSquare.setBackgroundResource(getResources().getIdentifier((String) pieceImage.getTag(), "drawable", getPackageName()));
-        currentSquare.setBackgroundResource(0);
+        //nextSquare.setBackgroundResource(getResources().getIdentifier((String) pieceImage.getTag(), "drawable", getPackageName()));
+        //currentSquare.setBackgroundResource(0);
 
         // Set move in prev moves dropdown
         String tmp = "";
