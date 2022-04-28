@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -65,15 +66,15 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout boardBackground;                                   //LinearLayout delete space for pieces
     LinearLayout optionLayout;                                      //LinearLayout housing all options
     AppCompatButton searchBtn;                                      //AppCompatButton for searching the DB
+    static TextView turnText;                                              //Current text is which turn it is
     View.OnClickListener searchBtnListener;                         //Listener for searchBtn
     View.OnClickListener optionListener;                            //Listener for all options
-    View.OnClickListener backgroundListener;                        //Listener for delete space for pieces
     SwitchCompat.OnCheckedChangeListener turnListener;              //Listener for turn toggle
     Spinner prevMovesDropdown;                                      //Spinner for previously executed moves in descending order
     String[] prevMoves = {};                                        //Array of all past moves, adapted into spinner dynamically
     ArrayAdapter<String> spinnerArrayAdapter;                       //Spinner adapter
     static SwitchCompat turnSwitch;                                 //switch for toggling white or black turn state
-    Map<String, int[]> nextMoves = new HashMap<String, int[]>();    //Map of FENs back from the
+    Map<String, int[]> nextMoves = new HashMap<String, int[]>();    //Map of FENs back from the DB
     String searchFEN;                                               //FEN of board state at last search
 
     @Override
@@ -88,9 +89,12 @@ public class MainActivity extends AppCompatActivity {
         // Load all XML controls into variables
         boardGrid = findViewById(R.id.boardGrid);
         optionLayout = findViewById(R.id.optionLayout);
-        prevMovesDropdown = findViewById(R.id.prevMoves);
+        //prevMovesDropdown = findViewById(R.id.prevMoves);
         searchBtn = findViewById(R.id.queryBtn);
         turnSwitch = findViewById(R.id.turnSwitch);
+        turnText = findViewById(R.id.turnText);
+        boardBackground = findViewById(R.id.boardBackground);
+
         // Control listeners
         optionListener = new View.OnClickListener() {
             @Override
@@ -101,22 +105,21 @@ public class MainActivity extends AppCompatActivity {
         turnListener = new SwitchCompat.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean switchState) {
+                if (switchState) {
+                    turnText.setText("White");
+                } else {
+                    turnText.setText("Black");
+                }
                 baseBoard.setWhiteTurn(switchState);
             }
         };
         searchBtnListener = new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                //get new recommended moves
-                if (calculateMinMoves(baseBoard.generateFEN()) > 0) {
-                    searchFEN = baseBoard.generateFEN();
-                    loadDisplayedMoves();
-                }   //TODO: Write secondary query getting just MOVE1 when the board is at starting position
+            public void onClick(View view) {    //get new recommended moves
+                searchFEN = baseBoard.generateFEN();
+                loadDisplayedMoves();
             }
         };
-
-        //listener for clicking outside board
-        boardBackground = (LinearLayout) findViewById(R.id.boardBackground);
         boardBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,22 +127,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //listener for each box in GridLayout board
-        boardClickedEvent(boardGrid);
+        // Assign listeners to controls
+        boardClickedEvent(boardGrid);   //listener for each box in GridLayout board
         turnSwitch.setOnCheckedChangeListener(turnListener);
         searchBtn.setOnClickListener(searchBtnListener);
 
         // Load past move into array for dropdown
-        // TODO: Remove the previous move dropdown
-        LoadPrevMoveSpinner();
+        //LoadPrevMoveSpinner();
 
         // Load the board from FEN
         //baseBoard.generateFromFEN("r1bqk1nr/pppp1ppp/2n5/2b1p3/1PB1P3/5N2/P1PP1PPP/RNBQK2R b KQkq - 0 4");  //Evan's Gambit
-        baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
-        //baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+        //baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
+        baseBoard.generateFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         //baseBoard.generateFromFEN("rnbqkbnr/pppp1ppp/8/4p3/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1");
         loadBoard(baseBoard);
-        optionLayout.removeAllViews();
+        optionLayout.removeAllViews();  //Clear options list
     }
 
     //loads frontend board from board object currently in use
@@ -154,8 +156,6 @@ public class MainActivity extends AppCompatActivity {
         //debugging tools to show stuff
         Log.d(TAG, baseBoard.toString());
         Log.d(TAG, baseBoard.generateFEN());
-        //Snackbar mySnackbar = Snackbar.make(optionLayout, baseBoard.generateFEN(), BaseTransientBottomBar.LENGTH_LONG);
-        //mySnackbar.show();
     }
 
     private void clearBoard() {
@@ -169,6 +169,15 @@ public class MainActivity extends AppCompatActivity {
     private void SetGridSpace(ChessPiece piece, int col, int row) {
         int gridID = getResources().getIdentifier(boardSquares[row][col], "id", getPackageName());
         ImageView pieceImage = findViewById(gridID);
+
+        // Rook, pawn, and knight need less space than the rest
+        LayoutParams pieceParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        if (piece.getType() == ChessType.ROOK || piece.getType() == ChessType.PAWN || piece.getType() == ChessType.KNIGHT) {
+            pieceParams.setMargins(GetDips(3),GetDips(3),GetDips(3),GetDips(3));
+        } else {
+            pieceParams.setMargins(GetDips(1),GetDips(1),GetDips(1),GetDips(1));
+        }
+        pieceImage.setLayoutParams(pieceParams);
         pieceImage.setBackgroundResource(getResources().getIdentifier((String) piece.findPieceName(), "drawable", getPackageName()));
     }
 
@@ -241,8 +250,7 @@ public class MainActivity extends AppCompatActivity {
 
     //when called, updates data in recommended move fields
     private void loadDisplayedMoves() {
-        //clear data
-        optionLayout.removeAllViews();
+        optionLayout.removeAllViews();  //clear options
 
         //query db for each move and respective data. Results in nextMoves global
         queryFutureMoves();
@@ -297,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
             String pieceName = pieceChanged[0];
             String fromSquare = boardSquares[Integer.parseInt(pieceChanged[1])][Integer.parseInt(pieceChanged[2])];
             String toSquare = boardSquares[Integer.parseInt(pieceChanged[3])][Integer.parseInt(pieceChanged[4])];
-            optionLayout.addView(NewOption(pieceName, fromSquare, toSquare, winPct,tiePct,lossPct));
+            optionLayout.addView(NewOption(pieceName, fromSquare, toSquare, winPct,tiePct,lossPct, move.get(1)));
         }
         //Clear nextMoves map once done with it
         nextMoves.clear();
@@ -310,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
         int winCount,lossCount,tieCount;
 
         try {
-            if (! Python.isStarted()) {
+            if (!Python.isStarted()) {
                 Python.start(new AndroidPlatform(this));
             }
             Python py = Python.getInstance();                                           //create instance
@@ -323,7 +331,9 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 5; i < o.asList().size(); i++) {
                     if (o.asList().get(i+1).toString().equals(""))  //The next move must have an FEN value
                         break;
-                    if (searchFEN.equals(o.asList().get(i).toString())) {
+                    if (searchFEN.equals("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq"))
+                        i--;
+                    if (searchFEN.equals(o.asList().get(i).toString()) || searchFEN.equals("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq")) {
                         // Do we already track this next move?
                         int[] outcomes = {0,0,0};
                         if (nextMoves.containsKey(o.asList().get(i+1).toString()))
@@ -346,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
                         //Log.d("TAG", " Black: " + nextMoves.get(o.asList().get(i+1).toString())[2]);
                         break;
                         // TODO: Put this shit in a function for Tom^^^^
-                    }   // TODO: Make sure we don't do out of bounds error if i+2 > o.asList().size()
+                    }
                 }
             }
         }
@@ -361,10 +371,12 @@ public class MainActivity extends AppCompatActivity {
         String fullText = "";
         String fen = searchFEN;
         int minMoves = calculateMinMoves(fen);
-        for (int i = minMoves - 1; i < 38; i++) {
-            fullText += moveColNames[i] + " = '" + fen + "'";
-            if (i != 37)
-                fullText += " OR ";
+        if (minMoves > 0) {
+            for (int i = minMoves - 1; i < 38; i++) {
+                fullText += moveColNames[i] + " = '" + fen + "'";
+                if (i != 37)
+                    fullText += " OR ";
+            }
         }
         return fullText;
     }
@@ -435,16 +447,16 @@ public class MainActivity extends AppCompatActivity {
         }
         tmp += ((String) nextSquareView.getText()).toLowerCase();
         AddPrevMove(tmp);
-        LoadPrevMoveSpinner();
+        //LoadPrevMoveSpinner();
     }
 
     // Link the array of previous moves to the Spinner
-    private void LoadPrevMoveSpinner() {
-        spinnerArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, prevMoves);
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
-        prevMovesDropdown.setAdapter(spinnerArrayAdapter);
-        prevMovesDropdown.setSelection(prevMoves.length-1);
-    }
+    //private void LoadPrevMoveSpinner() {
+    //    spinnerArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, prevMoves);
+    //    spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+    //    prevMovesDropdown.setAdapter(spinnerArrayAdapter);
+    //    prevMovesDropdown.setSelection(prevMoves.length-1);
+    //}
 
     // Return dips for use in setting a control's layout parameters
     private int GetDips(float dips) {
@@ -452,7 +464,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Add a new option to the list of moves
-    private LinearLayout NewOption(String pieceName, String currSquareText, String nextSquareText, String pctWinValue, String pctTieValue, String pctLossValue) {
+    private LinearLayout NewOption(String pieceName, String currSquareText, String nextSquareText, String pctWinValue, String pctTieValue, String pctLossValue, String totalCount) {
         // General stuff all options share
         LinearLayout option = new LinearLayout(this);
         LayoutParams optionLayoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, GetDips(80));
@@ -473,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
 
         //   Piece current square location
         TextView currSquare = new TextView(this);
-        currSquare.setLayoutParams(new LayoutParams(GetDips(38), ViewGroup.LayoutParams.MATCH_PARENT));
+        currSquare.setLayoutParams(new LayoutParams(GetDips(39), ViewGroup.LayoutParams.MATCH_PARENT));
         currSquare.setGravity(Gravity.CENTER);
         currSquare.setTextSize(30);
         currSquare.setText(currSquareText);
@@ -487,12 +499,29 @@ public class MainActivity extends AppCompatActivity {
 
         //   Piece next square location
         TextView nextSquare = new TextView(this);
-        nextSquare.setLayoutParams(new LayoutParams(GetDips(38), ViewGroup.LayoutParams.MATCH_PARENT));
+        nextSquare.setLayoutParams(new LayoutParams(GetDips(39), ViewGroup.LayoutParams.MATCH_PARENT));
         nextSquare.setGravity(Gravity.CENTER_VERTICAL);
         nextSquare.setTextSize(30);
         nextSquare.setText(nextSquareText);
 
-        //   in percentage
+        // Total and pct container for vertical layout
+        LinearLayout vert = new LinearLayout(this);
+        LayoutParams vertParams = new LayoutParams(GetDips(223), ViewGroup.LayoutParams.MATCH_PARENT);
+        vert.setLayoutParams(vertParams);
+        vert.setOrientation(LinearLayout.VERTICAL);
+
+        // Total # of games to use option
+        TextView total = new TextView(this);
+        LayoutParams totalParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, GetDips(15));
+        total.setLayoutParams(totalParams);
+        total.setText("Games: " + totalCount);
+
+        // pct container for horizontal layout
+        LinearLayout horz = new LinearLayout(this);
+        LayoutParams horzParams = new LayoutParams(GetDips(223), ViewGroup.LayoutParams.MATCH_PARENT);
+        horz.setLayoutParams(horzParams);
+
+        //   win percentage
         TextView pctWin = new TextView(this);
         LayoutParams pctWinParams = new LayoutParams(GetDips(73), ViewGroup.LayoutParams.WRAP_CONTENT);
         pctWinParams.setMargins(GetDips(5),0,0,0);
@@ -523,9 +552,12 @@ public class MainActivity extends AppCompatActivity {
         option.addView(currSquare);
         option.addView(arrowImage);
         option.addView(nextSquare);
-        option.addView(pctWin);
-        option.addView(pctTie);
-        option.addView(pctLoss);
+        vert.addView(total);
+        horz.addView(pctWin);
+        horz.addView(pctTie);
+        horz.addView(pctLoss);
+        vert.addView(horz);
+        option.addView(vert);
         return option;
     }
 

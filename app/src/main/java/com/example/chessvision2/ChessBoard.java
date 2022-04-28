@@ -60,9 +60,11 @@ public class ChessBoard {
         //Sets player turn by flipping switch and storing variable
         if (details[0].equals("w")) {
             MainActivity.turnSwitch.setChecked(true);   //setChecked does not fire off the listener for some reason
+            MainActivity.turnText.setText("White");
             isWhiteTurn = true;
         } else {
             MainActivity.turnSwitch.setChecked(false);  //setChecked does not fire off the listener for some reason
+            MainActivity.turnText.setText("Black");
             isWhiteTurn = false;
         }
         //store castle data
