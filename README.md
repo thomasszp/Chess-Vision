@@ -1,2 +1,2 @@
-# ChessVision
+# Chess.data
 Big Chess
