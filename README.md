@@ -1,2 +1,2 @@
 # Chess.data
-Big Chess
+Crowdsourced chess moves
