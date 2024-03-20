@@ -1,33 +1,20 @@
-# Chess.data
+# Chess Vision
 
-A basic chess app built to display and predict future moves.
+A data-oriented chess app built to display and predict future moves.
+
+![chessdemo](https://github.com/thomasszp/Chess.data/assets/28933646/8f20b47d-1f5d-4434-b813-cd58a74dcc18)
+
 
 ## Description
 
-An in-depth paragraph about your project and overview of use.
+Any chess game state can be summarized by FEN notation in a simple string (e.g. *rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1*).
+Chess Vision uses this notation to compare the current board of any given game and compare it with a database of historical games to give insights into the board state.
 
-## Getting Started
+The app will give a summary of some of the available data, such as popular moves, and likely win percentages.
+As a game progresses, less data is available to be drawn from and the relative popularity of each move decreases.
 
+This tool is most useful for analyzing and displaying popular blunders and brilliant moves that lead to drastic swings in win percentage at any given moment.
 
-### Installing
-
-* How/where to download your program
-* Any modifications needed to be made to files/folders
-
-### Executing program
-
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
-
-## Help
-
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
 
 ## Authors
 
